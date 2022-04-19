@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,6 +39,21 @@ namespace SuperImposX
             this.DataContext = this;
         }
 
+        private static void DrawGPXOnCanvas(IEnumerable<GPXProcessing.TrackPoint> points, Canvas canvas)
+        {
+            var line = points.CreatePolyline(new Size() { Width = canvas.ActualWidth, Height = canvas.ActualHeight });
+            line.StrokeThickness = 1;
+            line.Stroke = Brushes.White;
+            var bgLine = points.CreatePolyline(new Size() { Width = canvas.ActualWidth, Height = canvas.ActualHeight });
+            bgLine.Stroke = Brushes.Black;
+            bgLine.StrokeThickness = 3;
+            bgLine.Opacity = 0.618;
+
+            canvas.Children.Clear();
+            canvas.Children.Add(bgLine);
+            canvas.Children.Add(line);
+        }
+
         private void BrowseGPXClick(object sender, RoutedEventArgs e)
         {
             var ofd = new Microsoft.Win32.OpenFileDialog
@@ -54,7 +69,7 @@ namespace SuperImposX
             this.CurrentFile = ofd.FileName;
 
             _trackPoints = GPXProcessing.ReadGPX(this.CurrentFile);
-            var bounds = _trackPoints.GetBounds();
+            DrawGPXOnCanvas(_trackPoints, this.TrackCanvas);
         }
     }
 }
