@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,13 +41,15 @@ namespace SuperImposX
 
         private void BrowseGPXClick(object sender, RoutedEventArgs e)
         {
-            var ofd = new Microsoft.Win32.OpenFileDialog();
-            ofd.Filter = "*.gpx|*.GPX";
-            ofd.CheckFileExists = true;
-            ofd.CheckPathExists = true;
-            ofd.Multiselect = false;
-            ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            ofd.ValidateNames = true;
+            var ofd = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "*.gpx|*.GPX",
+                CheckFileExists = true,
+                CheckPathExists = true,
+                Multiselect = false,
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                ValidateNames = true
+            };
             if (ofd.ShowDialog() == true)
             this.CurrentFile = ofd.FileName;
 
