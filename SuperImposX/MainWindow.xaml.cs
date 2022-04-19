@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 
 namespace SuperImposX
 {
@@ -20,8 +21,6 @@ namespace SuperImposX
     /// </summary>
     public partial class MainWindow : Window
     {
-
-
         public string CurrentFile
         {
             get { return (string)GetValue(CurrentFileProperty); }
@@ -32,7 +31,7 @@ namespace SuperImposX
         public static readonly DependencyProperty CurrentFileProperty =
             DependencyProperty.Register("CurrentFile", typeof(string), typeof(MainWindow), new PropertyMetadata(string.Empty));
 
-
+        private static IEnumerable<GPXProcessing.TrackPoint>? _trackPoints;
 
         public MainWindow()
         {
@@ -51,6 +50,9 @@ namespace SuperImposX
             ofd.ValidateNames = true;
             if (ofd.ShowDialog() == true)
             this.CurrentFile = ofd.FileName;
+
+            _trackPoints = GPXProcessing.ReadGPX(this.CurrentFile);
+            var bounds = _trackPoints.GetBounds();
         }
     }
 }
