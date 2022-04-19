@@ -16,9 +16,9 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <TextBlock Text="GPX: " Margin="3"/>
+        <TextBlock Text="GPX:" Margin="3" Padding="3"/>
         <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Path=CurrentFile}" IsReadOnly="True" ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Text}" Margin="3" />
-        <Button Grid.Column="2" Grid.Row="0" Content="Browse..." Margin="3" Click="BrowseGPXClick" />
+        <Button Grid.Column="2" Grid.Row="0" Content="Browse..." Margin="3" Padding="3" Width="60" Click="BrowseGPXClick" />
         <Canvas x:Name="TrackCanvas" x:FieldModifier="private" Grid.Column="1" Grid.Row="1" Background="Transparent" />
     </Grid>
 </Window>
