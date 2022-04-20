@@ -12,9 +12,8 @@ namespace SuperImposX
 {
     internal static class TrackDrawing
     {
-        public static Polyline CreatePolyline(this IEnumerable<TrackPoint> points, Size canvasSize, int margin = 0)
+        public static Polyline CreatePolyline(this IEnumerable<TrackPoint> points, Size canvasSize, Helpers.Bounds<TrackPoint> trackBounds, int margin = 0)
         {
-            var trackBounds = points.GetBounds();
             var scale = new Size()
             {
                 Width = (canvasSize.Width - 2 * margin) / (trackBounds.Max.Longitude - trackBounds.Min.Longitude),
