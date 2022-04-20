@@ -80,6 +80,8 @@ namespace SuperImposX
         #region Private members
         
         private static IEnumerable<GPXProcessing.TrackPoint>? _trackPoints;
+        
+        private static int _trackPointsElapsedCount = 0;
 
         private static List<TimeSpan> _trackPointsTime = new List<TimeSpan>();
 
@@ -154,7 +156,7 @@ namespace SuperImposX
             var aspect = (bounds.Max.Latitude - bounds.Min.Latitude) / (bounds.Max.Longitude - bounds.Min.Longitude);
             SetCanvasSize(this.TrackCanvas, new Size() { Width = this.TrackCanvasWidth, Height = this.TrackCanvasWidth * aspect });
             SetCanvasOrigin(this.TrackCanvas, this.TrackCanvasOrigin);
-            DrawGPXOnCanvas(_trackPoints, this.TrackCanvas);
+            DrawGPXOnCanvas(_trackPoints, this.TrackCanvas, _trackPointsElapsedCount);
         }
 
         #endregion
@@ -210,6 +212,14 @@ namespace SuperImposX
 
                 this.TrackPointsTime.UpdateLayout();
             }
+        }
+
+        private void TrackPointsTimeSelected(object sender, SelectionChangedEventArgs e)
+        {
+            _trackPointsElapsedCount = _trackPoints?
+                .TakeWhile(p => p.Timestamp.Subtract(_trackPoints.First().Timestamp) <= _trackPointsTime[(sender as ListView)?.SelectedIndex ?? 0])
+                .Count() ?? 0;
+            this.RedrawTrackCanvas();
         }
     }
 }
