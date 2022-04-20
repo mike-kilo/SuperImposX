@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static SuperImposX.Helpers;
 
 namespace SuperImposX
 {
@@ -36,23 +37,26 @@ namespace SuperImposX
                 });
         }
 
-        public static Tuple<TrackPoint, TrackPoint> GetBounds(this IEnumerable<TrackPoint> points)
+        public static Bounds<TrackPoint> GetBounds(this IEnumerable<TrackPoint> points)
         {
-            return new Tuple<TrackPoint, TrackPoint>(
-                new TrackPoint 
-                { 
+            return new Bounds<TrackPoint>
+            {
+                Min = new TrackPoint
+                {
                     Latitude = points.MinBy(p => p.Latitude).Latitude,
                     Longitude = points.MinBy(p => p.Longitude).Longitude,
                     Elevation = points.MinBy(p => p.Elevation).Elevation,
                     Timestamp = points.MinBy(p => p.Timestamp).Timestamp,
                 },
-                new TrackPoint 
-                { 
+
+                Max = new TrackPoint
+                {
                     Latitude = points.MaxBy(p => p.Latitude).Latitude,
                     Longitude = points.MaxBy(p => p.Longitude).Longitude,
                     Elevation = points.MaxBy(p => p.Elevation).Elevation,
                     Timestamp = points.MaxBy(p => p.Timestamp).Timestamp,
-                });
+                },
+            };
         }
     }
 }

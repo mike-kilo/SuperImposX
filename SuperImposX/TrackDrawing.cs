@@ -17,16 +17,16 @@ namespace SuperImposX
             var trackBounds = points.GetBounds();
             var scale = new Size()
             {
-                Width = (canvasSize.Width - 2 * margin) / (trackBounds.Item2.Longitude - trackBounds.Item1.Longitude),
-                Height = (canvasSize.Height - 2 * margin) / (trackBounds.Item2.Latitude - trackBounds.Item1.Latitude),
+                Width = (canvasSize.Width - 2 * margin) / (trackBounds.Max.Longitude - trackBounds.Min.Longitude),
+                Height = (canvasSize.Height - 2 * margin) / (trackBounds.Max.Latitude - trackBounds.Min.Latitude),
             };
 
             var line = new Polyline
             {
                 Points = new PointCollection(points.Select(p => new Point()
                 {
-                    X = margin + (p.Longitude - trackBounds.Item1.Longitude) * scale.Width,
-                    Y = margin + (trackBounds.Item2.Latitude - p.Latitude) * scale.Height,
+                    X = margin + (p.Longitude - trackBounds.Min.Longitude) * scale.Width,
+                    Y = margin + (trackBounds.Max.Latitude - p.Latitude) * scale.Height,
                 })),
                 StrokeStartLineCap = PenLineCap.Round,
                 StrokeLineJoin = PenLineJoin.Round,
