@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -146,7 +146,7 @@ namespace SuperImposX
         {
             var ofd = new Microsoft.Win32.OpenFileDialog
             {
-                Filter = "*.gpx|*.GPX",
+                Filter = "GPX|*.gpx;*.GPX",
                 CheckFileExists = true,
                 CheckPathExists = true,
                 Multiselect = false,
