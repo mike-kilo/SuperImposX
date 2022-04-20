@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -52,6 +52,20 @@ namespace SuperImposX
             canvas.Children.Clear();
             canvas.Children.Add(bgLine);
             canvas.Children.Add(line);
+        }
+
+
+        public static void SetCanvasSize(Canvas canvas, Size size)
+        {
+            canvas.Width = size.Width;
+            canvas.Height = size.Height;
+            canvas.UpdateLayout();
+        }
+
+        public static void SetCanvasOrigin(Canvas canvas, Point origin)
+        {
+            Canvas.SetLeft(canvas, origin.X);
+            Canvas.SetTop(canvas, origin.Y);
         }
 
         private void BrowseGPXClick(object sender, RoutedEventArgs e)
