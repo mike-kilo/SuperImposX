@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -69,7 +69,7 @@ namespace SuperImposX
             this.CurrentFile = ofd.FileName;
 
             _trackPoints = GPXProcessing.ReadGPX(this.CurrentFile);
-            DrawGPXOnCanvas(_trackPoints, this.TrackCanvas);
+            DrawGPXOnCanvas(_trackPoints, this.PreviewCanvas);
         }
     }
 }
