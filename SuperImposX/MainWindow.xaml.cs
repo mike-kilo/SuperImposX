@@ -98,7 +98,7 @@ namespace SuperImposX
 
         #region Static methods
 
-        private static void DrawGPXOnCanvas(IEnumerable<GPXProcessing.TrackPoint> points, Canvas canvas)
+        private static void DrawGPXOnCanvas(IEnumerable<GPXProcessing.TrackPoint> points, Canvas canvas, int elapsedCount = 0)
         {
             var trackBounds = points.GetBounds();
 
@@ -113,6 +113,20 @@ namespace SuperImposX
             canvas.Children.Clear();
             canvas.Children.Add(bgLine);
             canvas.Children.Add(line);
+
+            if (elapsedCount > 0)
+            {
+                var elapsedLine = points.Take(elapsedCount).CreatePolyline(new Size() { Width = canvas.ActualWidth, Height = canvas.ActualHeight }, trackBounds, 10);
+                elapsedLine.StrokeThickness = 3;
+                elapsedLine.Stroke = Brushes.White;
+                var elapsedBgLine = points.Take(elapsedCount).CreatePolyline(new Size() { Width = canvas.ActualWidth, Height = canvas.ActualHeight }, trackBounds, 10);
+                elapsedBgLine.Stroke = Brushes.Black;
+                elapsedBgLine.StrokeThickness = 5;
+                elapsedBgLine.Opacity = 0.618;
+
+                canvas.Children.Add(elapsedBgLine);
+                canvas.Children.Add(elapsedLine);
+            }
         }
 
         public static void SetCanvasSize(Canvas canvas, Size size)
