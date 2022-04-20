@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,10 +41,10 @@ namespace SuperImposX
 
         private static void DrawGPXOnCanvas(IEnumerable<GPXProcessing.TrackPoint> points, Canvas canvas)
         {
-            var line = points.CreatePolyline(new Size() { Width = canvas.ActualWidth, Height = canvas.ActualHeight });
+            var line = points.CreatePolyline(new Size() { Width = canvas.ActualWidth, Height = canvas.ActualHeight }, 10);
             line.StrokeThickness = 1;
             line.Stroke = Brushes.White;
-            var bgLine = points.CreatePolyline(new Size() { Width = canvas.ActualWidth, Height = canvas.ActualHeight });
+            var bgLine = points.CreatePolyline(new Size() { Width = canvas.ActualWidth, Height = canvas.ActualHeight }, 10);
             bgLine.Stroke = Brushes.Black;
             bgLine.StrokeThickness = 3;
             bgLine.Opacity = 0.618;
