@@ -78,7 +78,7 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-            <ListView x:Name="TrackPointsTime" x:FieldModifier="private">
+            <ListView x:Name="TrackPointsTime" x:FieldModifier="private" SelectionChanged="TrackPointsTimeSelected" SelectionMode="Single" >
                 <!--<ListView.ItemTemplate>
                     <DataTemplate>
                         <WrapPanel>
@@ -87,7 +87,11 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>-->
             </ListView>
-                <Button Content="Load time moments" Grid.Row="1" Width="130" Margin="3" Click="TimeMomentsClick" />
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Content="Add..." Width="60" Margin="3" Click="TimeMomentsAddClick" />
+                    <Button Content="Load..." Width="60" Margin="3" Click="TimeMomentsLoadClick" />
+                    <Button Content="Clear" Width="60" Margin="3" Click="TimeMomentsClearClick" />
+                </StackPanel>
             </Grid>
         </GroupBox>
     </Grid>

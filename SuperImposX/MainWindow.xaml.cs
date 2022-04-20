@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -186,9 +186,7 @@ namespace SuperImposX
             this.RedrawTrackCanvas();
         }
 
-        #endregion
-
-        private void TimeMomentsClick(object sender, RoutedEventArgs e)
+        private void TimeMomentsLoadClick(object sender, RoutedEventArgs e)
         {
             if (_trackPoints == null) return;
             var ofd = new Microsoft.Win32.OpenFileDialog
@@ -220,6 +218,18 @@ namespace SuperImposX
                 .TakeWhile(p => p.Timestamp.Subtract(_trackPoints.First().Timestamp) <= _trackPointsTime[(sender as ListView)?.SelectedIndex ?? 0])
                 .Count() ?? 0;
             this.RedrawTrackCanvas();
+        }
+
+        private void TimeMomentsAddClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        #endregion
+
+        private void TimeMomentsClearClick(object sender, RoutedEventArgs e)
+        {
+            _trackPointsTime.RemoveAt(this.TrackPointsTime.SelectedIndex);
         }
     }
 }
