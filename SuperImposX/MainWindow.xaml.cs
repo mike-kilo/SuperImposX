@@ -21,15 +21,25 @@ namespace SuperImposX
     /// </summary>
     public partial class MainWindow : Window
     {
+        #region Dependency properties
+
+        public static readonly DependencyProperty CurrentFileProperty = DependencyProperty.Register("CurrentFile", typeof(string), typeof(MainWindow), new PropertyMetadata(string.Empty));
+
+        public static readonly DependencyProperty TrackCanvasSizeProperty = DependencyProperty.Register("TrackCanvasSize", typeof(Size), typeof(MainWindow), new PropertyMetadata(new Size() { Width = 100.0, Height = 100.0 }));
+
+        public static readonly DependencyProperty TrackCanvasWidthProperty = DependencyProperty.Register("TrackCanvasWidth", typeof(double), typeof(MainWindow), new PropertyMetadata(100.0));
+
+        public static readonly DependencyProperty TrackCanvasOriginProperty = DependencyProperty.Register("TrackCanvasOrigin", typeof(Point), typeof(MainWindow), new PropertyMetadata(new Point() { X = 0, Y = 0 }));
+
+        #endregion
+
+        #region Properties
+
         public string CurrentFile
         {
             get { return (string)GetValue(CurrentFileProperty); }
             set { SetValue(CurrentFileProperty, value); }
         }
-
-        // Using a DependencyProperty as the backing store for CurrentFile.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty CurrentFileProperty =
-            DependencyProperty.Register("CurrentFile", typeof(string), typeof(MainWindow), new PropertyMetadata(string.Empty));
 
         public Size TrackCanvasSize
         {
@@ -40,10 +50,6 @@ namespace SuperImposX
                 this.TrackCanvas.UpdateLayout();
             }
         }
-
-        // Using a DependencyProperty as the backing store for TrackCanvasSize.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty TrackCanvasSizeProperty =
-            DependencyProperty.Register("TrackCanvasSize", typeof(Size), typeof(MainWindow), new PropertyMetadata(new Size() { Width = 100.0, Height = 100.0 }));
 
         public double TrackCanvasWidth
         {
@@ -58,10 +64,6 @@ namespace SuperImposX
             }
         }
 
-        // Using a DependencyProperty as the backing store for size.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty TrackCanvasWidthProperty =
-            DependencyProperty.Register("TrackCanvasWidth", typeof(double), typeof(MainWindow), new PropertyMetadata(100.0));
-
         public Point TrackCanvasOrigin
         {
             get { return (Point)GetValue(TrackCanvasOriginProperty); }
@@ -73,17 +75,25 @@ namespace SuperImposX
             }
         }
 
-        // Using a DependencyProperty as the backing store for TrackCanvasOrigin.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty TrackCanvasOriginProperty =
-            DependencyProperty.Register("TrackCanvasOrigin", typeof(Point), typeof(MainWindow), new PropertyMetadata(new Point() { X = 0, Y = 0}));
+        #endregion
 
+        #region Private members
+        
         private static IEnumerable<GPXProcessing.TrackPoint>? _trackPoints;
+
+        #endregion
+
+        #region Constructors
 
         public MainWindow()
         {
             InitializeComponent();
             this.DataContext = this;
         }
+
+        #endregion
+
+        #region Static methods
 
         private static void DrawGPXOnCanvas(IEnumerable<GPXProcessing.TrackPoint> points, Canvas canvas)
         {
@@ -100,17 +110,6 @@ namespace SuperImposX
             canvas.Children.Add(line);
         }
 
-        private void RedrawTrackCanvas()
-        {
-            if (_trackPoints == null) return;
-
-            var bounds = _trackPoints.GetBounds();
-            var aspect = (bounds.Max.Latitude - bounds.Min.Latitude) / (bounds.Max.Longitude - bounds.Min.Longitude);
-            SetCanvasSize(this.TrackCanvas, new Size() { Width = this.TrackCanvasWidth, Height = this.TrackCanvasWidth * aspect });
-            SetCanvasOrigin(this.TrackCanvas, this.TrackCanvasOrigin);
-            DrawGPXOnCanvas(_trackPoints, this.TrackCanvas);
-        }
-
         public static void SetCanvasSize(Canvas canvas, Size size)
         {
             canvas.Width = size.Width;
@@ -123,6 +122,25 @@ namespace SuperImposX
             Canvas.SetLeft(canvas, origin.X);
             Canvas.SetTop(canvas, origin.Y);
         }
+
+        #endregion
+
+        #region Methods
+
+        private void RedrawTrackCanvas()
+        {
+            if (_trackPoints == null) return;
+
+            var bounds = _trackPoints.GetBounds();
+            var aspect = (bounds.Max.Latitude - bounds.Min.Latitude) / (bounds.Max.Longitude - bounds.Min.Longitude);
+            SetCanvasSize(this.TrackCanvas, new Size() { Width = this.TrackCanvasWidth, Height = this.TrackCanvasWidth * aspect });
+            SetCanvasOrigin(this.TrackCanvas, this.TrackCanvasOrigin);
+            DrawGPXOnCanvas(_trackPoints, this.TrackCanvas);
+        }
+
+        #endregion
+
+        #region Event handlers
 
         private void BrowseGPXClick(object sender, RoutedEventArgs e)
         {
@@ -146,5 +164,7 @@ namespace SuperImposX
         {
             this.RedrawTrackCanvas();
         }
+    
+        #endregion
     }
 }
