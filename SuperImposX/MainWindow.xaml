@@ -7,7 +7,7 @@
         d:DataContext="{Binding RelativeSource={RelativeSource Self}}"
         mc:Ignorable="d"
         Title="SuperImposX" 
-        MinWidth="800" MinHeight="510"
+        MinWidth="900" MinHeight="510"
         d:DesignHeight="500" d:DesignWidth="800">
     <Grid Margin="3">
         <Grid.RowDefinitions>
@@ -73,7 +73,22 @@
             </Grid>
         </GroupBox>
         <GroupBox Grid.Column="1" Grid.Row="1" Header="Moments" Margin="3" >
-            
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+            <ListView x:Name="TrackPointsTime" x:FieldModifier="private">
+                <!--<ListView.ItemTemplate>
+                    <DataTemplate>
+                        <WrapPanel>
+                            <TextBlock Text="{Binding Name}" FontWeight="Bold" />
+                        </WrapPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>-->
+            </ListView>
+                <Button Content="Load time moments" Grid.Row="1" Width="130" Margin="3" Click="TimeMomentsClick" />
+            </Grid>
         </GroupBox>
     </Grid>
 </Window>

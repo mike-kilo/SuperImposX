@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -81,6 +81,8 @@ namespace SuperImposX
         
         private static IEnumerable<GPXProcessing.TrackPoint>? _trackPoints;
 
+        private static List<TimeSpan> _trackPointsTime = new List<TimeSpan>();
+
         #endregion
 
         #region Constructors
@@ -89,6 +91,7 @@ namespace SuperImposX
         {
             InitializeComponent();
             this.DataContext = this;
+            this.TrackPointsTime.ItemsSource = _trackPointsTime;
         }
 
         #endregion
@@ -164,7 +167,33 @@ namespace SuperImposX
         {
             this.RedrawTrackCanvas();
         }
-    
+
         #endregion
+
+        private void TimeMomentsClick(object sender, RoutedEventArgs e)
+        {
+            if (_trackPoints == null) return;
+            var ofd = new Microsoft.Win32.OpenFileDialog
+            {
+                Filter = "Media files|*.mp4;*.avi;*.jpg;*.jpeg;*.png|All files|*.*",
+                CheckFileExists = true,
+                CheckPathExists = true,
+                Multiselect = true,
+                InitialDirectory = System.IO.Path.GetDirectoryName(this.CurrentFile),
+                ValidateNames = true
+            };
+            if (ofd.ShowDialog() == true)
+            {
+                ofd.FileNames?
+                    .Select(f => new System.IO.FileInfo(f).LastWriteTime)
+                    .Where(f => f >= _trackPoints?.First().Timestamp && f <= _trackPoints.Last().Timestamp)
+                    .Select(f => f.Subtract(_trackPoints.First().Timestamp))
+                    .ToList()
+                    .ForEach(f => _trackPointsTime.Add(f));
+                _trackPointsTime = _trackPointsTime.OrderBy(f => f).ToList();
+
+                this.TrackPointsTime.UpdateLayout();
+            }
+        }
     }
 }
