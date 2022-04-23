@@ -253,6 +253,7 @@ namespace SuperImposX
 
         private void TimeMomentsClearClick(object sender, RoutedEventArgs e)
         {
+            if (this.TrackPointsTime.SelectedIndex < 0) return;
             var selectedIndex = this.TrackPointsTime.SelectedIndex;
             _trackPointsTime.RemoveAt(this.TrackPointsTime.SelectedIndex);
             this.TrackPointsTime.SelectedIndex = (int)Math.Min(Math.Max(0, selectedIndex), this.TrackPointsTime.Items.Count - 1);
