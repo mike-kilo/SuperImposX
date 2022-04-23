@@ -145,8 +145,11 @@ namespace SuperImposX
                 elapsedBgLine.StrokeThickness = 5;
                 elapsedBgLine.Opacity = 0.618;
 
+                var currentPosition = points.Skip(elapsedCount - 1).First().CreateEllipse(canvasSize, trackBounds, margin);
+
                 canvas.Children.Add(elapsedBgLine);
                 canvas.Children.Add(elapsedLine);
+                canvas.Children.Add(currentPosition);
             }
         }
 

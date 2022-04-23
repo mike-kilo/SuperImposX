@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using static SuperImposX.GPXProcessing;
@@ -34,6 +35,29 @@ namespace SuperImposX
             };
 
             return line;
+        }
+
+        public static Ellipse CreateEllipse(this TrackPoint point, Size canvasSize, Helpers.Bounds<TrackPoint> trackBounds, int margin = 0)
+        {
+            var scale = new Size()
+            {
+                Width = (canvasSize.Width - 2 * margin) / (trackBounds.Max.Longitude - trackBounds.Min.Longitude),
+                Height = (canvasSize.Height - 2 * margin) / (trackBounds.Max.Latitude - trackBounds.Min.Latitude),
+            };
+
+            var ellipse = new Ellipse()
+            {
+                Width = 10,
+                Height = 10,
+                Fill = Brushes.White,
+                Stroke = Brushes.Black,
+                StrokeThickness = 1,
+            };
+
+            Canvas.SetTop(ellipse, (trackBounds.Max.Latitude - point.Latitude) * scale.Height + 5);
+            Canvas.SetLeft(ellipse, (point.Longitude - trackBounds.Min.Longitude) * scale.Width + 5);
+
+            return ellipse;
         }
     }
 }
