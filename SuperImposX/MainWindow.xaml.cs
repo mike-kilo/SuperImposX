@@ -257,8 +257,6 @@ namespace SuperImposX
             }
         }
 
-        #endregion
-
         private void TimeMomentsClearClick(object sender, RoutedEventArgs e)
         {
             if (this.TrackPointsTime.SelectedIndex < 0) return;
@@ -271,5 +269,25 @@ namespace SuperImposX
         {
             this.NewTimeSpanIsValid = TimeSpan.TryParse((sender as TextBox)?.Text, out _);
         }
+
+        private void GenerateSuperimposeImagesClick(object sender, RoutedEventArgs e)
+        {
+            if (_trackPointsTime.Count < 1) return;
+            this.PreviewCanvas.SaveCanvasToPNG(
+                System.IO.Path.Combine(System.IO.Path.GetDirectoryName(this.CurrentFile) ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), 
+                $"{System.IO.Path.GetFileNameWithoutExtension(this.CurrentFile)}_{_trackPointsTime[this.TrackPointsTime.SelectedIndex].ElapsedTime.ToString().Replace(':', '.')}_{_trackPointsTime[this.TrackPointsTime.SelectedIndex].Filename}.png"));
+
+            //foreach (var elapsed in _trackPointsTime)
+            //{
+            //    _trackPointsElapsedCount = _trackPoints?
+            //        .TakeWhile(p => p.Timestamp.Subtract(_trackPoints.First().Timestamp) <= elapsed.ElapsedTime)
+            //        .Count() ?? 0;
+
+            //    this.RedrawTrackCanvas();
+            //    this.TrackCanvas.SaveCanvasToPNG(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(this.CurrentFile) ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), $"{System.IO.Path.GetFileNameWithoutExtension(this.CurrentFile)}_{elapsed.ElapsedTime.ToString().Replace(':', '.')}_{elapsed.Filename}.png"));
+            //}
+        }
+
+        #endregion
     }
 }
