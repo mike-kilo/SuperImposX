@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -31,6 +31,10 @@ namespace SuperImposX
         public static readonly DependencyProperty TrackCanvasWidthProperty = DependencyProperty.Register("TrackCanvasWidth", typeof(double), typeof(MainWindow), new PropertyMetadata(100.0));
 
         public static readonly DependencyProperty TrackCanvasOriginProperty = DependencyProperty.Register("TrackCanvasOrigin", typeof(Point), typeof(MainWindow), new PropertyMetadata(new Point() { X = 0, Y = 0 }));
+
+        public static readonly DependencyProperty NewTimeSpanProperty = DependencyProperty.Register("NewTimeSpan", typeof(string), typeof(MainWindow), new PropertyMetadata(string.Empty));
+
+        public static readonly DependencyProperty NewTimeSpanIsValidProperty = DependencyProperty.Register("NewTimeSpanIsValid", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
         #endregion
 
@@ -74,6 +78,18 @@ namespace SuperImposX
                 Canvas.SetLeft(this.TrackCanvas, value.X);
                 Canvas.SetTop(this.TrackCanvas, value.Y);
             }
+        }
+
+        public string NewTimeSpan
+        {
+            get { return (string)GetValue(NewTimeSpanProperty); }
+            set { SetValue(NewTimeSpanProperty, value); }
+        }
+
+        public bool NewTimeSpanIsValid
+        {
+            get { return (bool)GetValue(NewTimeSpanIsValidProperty); }
+            set { SetValue(NewTimeSpanIsValidProperty, value); }
         }
 
         #endregion
@@ -224,7 +240,13 @@ namespace SuperImposX
 
         private void TimeMomentsAddClick(object sender, RoutedEventArgs e)
         {
-
+            var newTimeSpan = new TimeSpan(0);
+            if (TimeSpan.TryParse(this.NewTimeSpan, out newTimeSpan))
+            {
+                _trackPointsTime.Add(newTimeSpan);
+                _trackPointsTime.Sort();
+                this.NewTimeSpan = String.Empty;
+            }
         }
 
         #endregion
@@ -234,6 +256,11 @@ namespace SuperImposX
             var selectedIndex = this.TrackPointsTime.SelectedIndex;
             _trackPointsTime.RemoveAt(this.TrackPointsTime.SelectedIndex);
             this.TrackPointsTime.SelectedIndex = (int)Math.Min(Math.Max(0, selectedIndex), this.TrackPointsTime.Items.Count - 1);
+        }
+
+        private void NewTimeSpanChanged(object sender, TextChangedEventArgs e)
+        {
+            this.NewTimeSpanIsValid = TimeSpan.TryParse((sender as TextBox)?.Text, out _);
         }
     }
 }
