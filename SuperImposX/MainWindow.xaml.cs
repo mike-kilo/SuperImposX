@@ -213,9 +213,12 @@ namespace SuperImposX
 
         private void TrackPointsTimeSelected(object sender, SelectionChangedEventArgs e)
         {
+            if ((sender as ListView)?.SelectedIndex < 0) return;
+
             _trackPointsElapsedCount = _trackPoints?
                 .TakeWhile(p => p.Timestamp.Subtract(_trackPoints.First().Timestamp) <= _trackPointsTime[(sender as ListView)?.SelectedIndex ?? 0])
                 .Count() ?? 0;
+
             this.RedrawTrackCanvas();
         }
 
