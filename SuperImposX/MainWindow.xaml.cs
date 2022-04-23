@@ -100,7 +100,7 @@ namespace SuperImposX
         
         private static int _trackPointsElapsedCount = 0;
 
-        private static ObservableCollection<TimeSpan> _trackPointsTime = new ObservableCollection<TimeSpan>();
+        private static ObservableCollection<Helpers.ElapsedPoint> _trackPointsTime = new ObservableCollection<Helpers.ElapsedPoint>();
 
         #endregion
 
@@ -223,11 +223,11 @@ namespace SuperImposX
             if (ofd.ShowDialog() == true)
             {
                 ofd.FileNames?
-                    .Select(f => new System.IO.FileInfo(f).LastWriteTime)
-                    .Where(f => f >= _trackPoints?.First().Timestamp && f <= _trackPoints.Last().Timestamp)
-                    .Select(f => f.Subtract(_trackPoints.First().Timestamp))
+                    .Select(f => new { Filename = new System.IO.FileInfo(f).Name, LastWriteTime = new System.IO.FileInfo(f).LastWriteTime })
+                    .Where(f => f.LastWriteTime >= _trackPoints?.First().Timestamp && f.LastWriteTime <= _trackPoints.Last().Timestamp)
+                    .Select(f => new { Filename = f.Filename, Elapsed = f.LastWriteTime.Subtract(_trackPoints.First().Timestamp) })
                     .ToList()
-                    .ForEach(f => _trackPointsTime.Add(f));
+                    .ForEach(f => _trackPointsTime.Add(new Helpers.ElapsedPoint() { ElapsedTime = f.Elapsed, Filename = f.Filename }));
                 _trackPointsTime.Sort();
             }
         }
@@ -237,7 +237,7 @@ namespace SuperImposX
             if ((sender as ListView)?.SelectedIndex < 0) return;
 
             _trackPointsElapsedCount = _trackPoints?
-                .TakeWhile(p => p.Timestamp.Subtract(_trackPoints.First().Timestamp) <= _trackPointsTime[(sender as ListView)?.SelectedIndex ?? 0])
+                .TakeWhile(p => p.Timestamp.Subtract(_trackPoints.First().Timestamp) <= _trackPointsTime[(sender as ListView)?.SelectedIndex ?? 0].ElapsedTime)
                 .Count() ?? 0;
 
             this.RedrawTrackCanvas();
@@ -248,7 +248,7 @@ namespace SuperImposX
             var newTimeSpan = new TimeSpan(0);
             if (TimeSpan.TryParse(this.NewTimeSpan, out newTimeSpan))
             {
-                _trackPointsTime.Add(newTimeSpan);
+                _trackPointsTime.Add(new Helpers.ElapsedPoint() { ElapsedTime = newTimeSpan, Filename = "Custom" });
                 _trackPointsTime.Sort();
                 this.NewTimeSpan = String.Empty;
             }

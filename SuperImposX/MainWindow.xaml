@@ -80,13 +80,15 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
             <ListView x:Name="TrackPointsTime" x:FieldModifier="private" SelectionChanged="TrackPointsTimeSelected" SelectionMode="Single" >
-                <!--<ListView.ItemTemplate>
+                <ListView.ItemTemplate>
                     <DataTemplate>
                         <WrapPanel>
-                            <TextBlock Text="{Binding Name}" FontWeight="Bold" />
+                            <TextBlock Text="{Binding ElapsedTime}" FontWeight="Bold" />
+                            <TextBlock Width="10" />
+                            <TextBlock Text="{Binding Filename}" />
                         </WrapPanel>
                     </DataTemplate>
-                </ListView.ItemTemplate>-->
+                </ListView.ItemTemplate>
             </ListView>
                 <StackPanel Grid.Row="1" Orientation="Vertical">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
