@@ -227,7 +227,7 @@ namespace SuperImposX
                     .Where(f => f.LastWriteTime >= _trackPoints?.First().Timestamp && f.LastWriteTime <= _trackPoints.Last().Timestamp)
                     .Select(f => new { Filename = f.Filename, Elapsed = f.LastWriteTime.Subtract(_trackPoints.First().Timestamp) })
                     .ToList()
-                    .ForEach(f => _trackPointsTime.Add(new Helpers.ElapsedPoint() { ElapsedTime = f.Elapsed, Filename = f.Filename }));
+                    .ForEach(f => _trackPointsTime.Add(new Helpers.ElapsedPoint() { ElapsedTime = f.Elapsed, Filename = System.IO.Path.GetFileNameWithoutExtension(f.Filename) }));
                 _trackPointsTime.Sort();
             }
         }
