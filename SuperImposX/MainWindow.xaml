@@ -88,7 +88,7 @@
                 </ListView.ItemTemplate>-->
             </ListView>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Content="Add..." Width="60" Margin="3" Click="TimeMomentsAddClick" />
+                    <Button Content="Add..." Width="60" Margin="3" Click="TimeMomentsAddClick" IsEnabled="False" />
                     <Button Content="Load..." Width="60" Margin="3" Click="TimeMomentsLoadClick" />
                     <Button Content="Clear" Width="60" Margin="3" Click="TimeMomentsClearClick" />
                 </StackPanel>
