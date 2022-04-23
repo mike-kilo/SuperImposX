@@ -222,12 +222,15 @@ namespace SuperImposX
             };
             if (ofd.ShowDialog() == true)
             {
+                if (_trackPoints == null || !_trackPoints.Any()) return;
+
+                var timeMargin = new TimeSpan(1, 0, 0);
                 ofd.FileNames?
                     .Select(f => new { Filename = new System.IO.FileInfo(f).Name, LastWriteTime = new System.IO.FileInfo(f).LastWriteTime })
-                    .Where(f => f.LastWriteTime >= _trackPoints?.First().Timestamp && f.LastWriteTime <= _trackPoints.Last().Timestamp)
+                    .Where(f => f.LastWriteTime.Add(timeMargin) >= _trackPoints?.First().Timestamp && f.LastWriteTime.Subtract(timeMargin) <= _trackPoints?.Last().Timestamp)
                     .Select(f => new { Filename = f.Filename, Elapsed = f.LastWriteTime.Subtract(_trackPoints.First().Timestamp) })
                     .ToList()
-                    .ForEach(f => _trackPointsTime.Add(new Helpers.ElapsedPoint() { ElapsedTime = f.Elapsed, Filename = System.IO.Path.GetFileNameWithoutExtension(f.Filename) }));
+                    .ForEach(f => _trackPointsTime.Add(new Helpers.ElapsedPoint() { ElapsedTime = f.Elapsed < new TimeSpan(0) ? new TimeSpan(0) : f.Elapsed, Filename = System.IO.Path.GetFileNameWithoutExtension(f.Filename) }));
                 _trackPointsTime.Sort();
             }
         }
