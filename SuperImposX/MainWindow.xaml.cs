@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -231,7 +231,9 @@ namespace SuperImposX
 
         private void TimeMomentsClearClick(object sender, RoutedEventArgs e)
         {
+            var selectedIndex = this.TrackPointsTime.SelectedIndex;
             _trackPointsTime.RemoveAt(this.TrackPointsTime.SelectedIndex);
+            this.TrackPointsTime.SelectedIndex = (int)Math.Min(Math.Max(0, selectedIndex), this.TrackPointsTime.Items.Count - 1);
         }
     }
 }
