@@ -61,9 +61,9 @@
                 <Button Grid.Column="4" HorizontalAlignment="Right" Content="Redraw" Width="80" Click="RedrawClick" />
                 <Border Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="2" BorderThickness="1" BorderBrush="Black" Width="640" Height="360" >
                     <Canvas x:Name="PreviewCanvas" x:FieldModifier="private" Width="1280" Height="720" Background="Transparent" >
-                        <Canvas.RenderTransform>
+                        <Canvas.LayoutTransform>
                             <ScaleTransform ScaleX="0.5" ScaleY="0.5" />
-                        </Canvas.RenderTransform>
+                        </Canvas.LayoutTransform>
                         <Canvas.Children>
                             <Canvas x:Name="TrackCanvas" x:FieldModifier="private" 
                                     Width="{Binding Path=TrackCanvasSize.Width}" Height="{Binding Path=TrackCanvasSize.Height}" 
