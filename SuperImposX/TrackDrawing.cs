@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using static SuperImposX.GPXProcessing;
 
@@ -58,6 +59,40 @@ namespace SuperImposX
             Canvas.SetLeft(ellipse, (point.Longitude - trackBounds.Min.Longitude) * scale.Width + 5);
 
             return ellipse;
+        }
+
+        public static void SaveCanvasToPNG(this Canvas canvas, string filename)
+        {
+            Rect bounds = VisualTreeHelper.GetDescendantBounds(canvas);
+            double dpi = 96d;
+
+            RenderTargetBitmap rtb = new((int)bounds.Width, (int)bounds.Height, dpi, dpi, PixelFormats.Default);
+
+            DrawingVisual dv = new();
+            using (DrawingContext dc = dv.RenderOpen())
+            {
+                VisualBrush vb = new(canvas);
+                dc.DrawRectangle(vb, null, new Rect(new Point(), bounds.Size));
+            }
+
+            rtb.Render(dv);
+
+            BitmapEncoder pngEncoder = new PngBitmapEncoder();
+            pngEncoder.Frames.Add(BitmapFrame.Create(rtb));
+
+            try
+            {
+                System.IO.MemoryStream ms = new System.IO.MemoryStream();
+
+                pngEncoder.Save(ms);
+                ms.Close();
+
+                System.IO.File.WriteAllBytes(filename, ms.ToArray());
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show(err.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }
