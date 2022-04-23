@@ -120,11 +120,13 @@ namespace SuperImposX
         private static void DrawGPXOnCanvas(IEnumerable<GPXProcessing.TrackPoint> points, Canvas canvas, int elapsedCount = 0)
         {
             var trackBounds = points.GetBounds();
+            var canvasSize = new Size() { Width = canvas.ActualWidth, Height = canvas.ActualHeight };
+            var margin = 10;
 
-            var line = points.CreatePolyline(new Size() { Width = canvas.ActualWidth, Height = canvas.ActualHeight }, trackBounds, 10);
+            var line = points.CreatePolyline(canvasSize, trackBounds, margin);
             line.StrokeThickness = 1;
             line.Stroke = Brushes.White;
-            var bgLine = points.CreatePolyline(new Size() { Width = canvas.ActualWidth, Height = canvas.ActualHeight }, trackBounds, 10);
+            var bgLine = points.CreatePolyline(canvasSize, trackBounds, margin);
             bgLine.Stroke = Brushes.Black;
             bgLine.StrokeThickness = 3;
             bgLine.Opacity = 0.618;
@@ -135,10 +137,10 @@ namespace SuperImposX
 
             if (elapsedCount > 0)
             {
-                var elapsedLine = points.Take(elapsedCount).CreatePolyline(new Size() { Width = canvas.ActualWidth, Height = canvas.ActualHeight }, trackBounds, 10);
+                var elapsedLine = points.Take(elapsedCount).CreatePolyline(canvasSize, trackBounds, margin);
                 elapsedLine.StrokeThickness = 3;
                 elapsedLine.Stroke = Brushes.White;
-                var elapsedBgLine = points.Take(elapsedCount).CreatePolyline(new Size() { Width = canvas.ActualWidth, Height = canvas.ActualHeight }, trackBounds, 10);
+                var elapsedBgLine = points.Take(elapsedCount).CreatePolyline(canvasSize, trackBounds, margin);
                 elapsedBgLine.Stroke = Brushes.Black;
                 elapsedBgLine.StrokeThickness = 5;
                 elapsedBgLine.Opacity = 0.618;
