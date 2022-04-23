@@ -124,11 +124,11 @@ namespace SuperImposX
             var margin = 10;
 
             var line = points.CreatePolyline(canvasSize, trackBounds, margin);
-            line.StrokeThickness = 1;
+            line.StrokeThickness = 2;
             line.Stroke = Brushes.White;
             var bgLine = points.CreatePolyline(canvasSize, trackBounds, margin);
             bgLine.Stroke = Brushes.Black;
-            bgLine.StrokeThickness = 3;
+            bgLine.StrokeThickness = 4;
             bgLine.Opacity = 0.618;
 
             canvas.Children.Clear();
@@ -138,11 +138,11 @@ namespace SuperImposX
             if (elapsedCount > 0)
             {
                 var elapsedLine = points.Take(elapsedCount).CreatePolyline(canvasSize, trackBounds, margin);
-                elapsedLine.StrokeThickness = 3;
+                elapsedLine.StrokeThickness = 5;
                 elapsedLine.Stroke = Brushes.White;
                 var elapsedBgLine = points.Take(elapsedCount).CreatePolyline(canvasSize, trackBounds, margin);
                 elapsedBgLine.Stroke = Brushes.Black;
-                elapsedBgLine.StrokeThickness = 5;
+                elapsedBgLine.StrokeThickness = 7;
                 elapsedBgLine.Opacity = 0.618;
 
                 var currentPosition = points.Skip(elapsedCount - 1).First().CreateEllipse(canvasSize, trackBounds, margin);
