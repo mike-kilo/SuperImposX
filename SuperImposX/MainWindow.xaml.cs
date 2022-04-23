@@ -248,7 +248,7 @@ namespace SuperImposX
             var newTimeSpan = new TimeSpan(0);
             if (TimeSpan.TryParse(this.NewTimeSpan, out newTimeSpan))
             {
-                _trackPointsTime.Add(new Helpers.ElapsedPoint() { ElapsedTime = newTimeSpan, Filename = "Custom" });
+                _trackPointsTime.Add(new Helpers.ElapsedPoint() { ElapsedTime = newTimeSpan, Filename = newTimeSpan.ToString().Replace(':','.') });
                 _trackPointsTime.Sort();
                 this.NewTimeSpan = String.Empty;
             }
