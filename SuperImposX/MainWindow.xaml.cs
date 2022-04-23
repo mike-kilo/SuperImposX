@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -83,7 +84,7 @@ namespace SuperImposX
         
         private static int _trackPointsElapsedCount = 0;
 
-        private static List<TimeSpan> _trackPointsTime = new List<TimeSpan>();
+        private static ObservableCollection<TimeSpan> _trackPointsTime = new ObservableCollection<TimeSpan>();
 
         #endregion
 
@@ -206,9 +207,7 @@ namespace SuperImposX
                     .Select(f => f.Subtract(_trackPoints.First().Timestamp))
                     .ToList()
                     .ForEach(f => _trackPointsTime.Add(f));
-                _trackPointsTime = _trackPointsTime.OrderBy(f => f).ToList();
-
-                this.TrackPointsTime.UpdateLayout();
+                _trackPointsTime.Sort();
             }
         }
 
