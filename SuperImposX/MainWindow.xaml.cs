@@ -22,13 +22,19 @@ namespace SuperImposX
     /// </summary>
     public partial class MainWindow : Window
     {
+        #region Singleton
+
+        private static MainWindow? _instance;
+
+        #endregion
+
         #region Dependency properties
 
         public static readonly DependencyProperty CurrentFileProperty = DependencyProperty.Register("CurrentFile", typeof(string), typeof(MainWindow), new PropertyMetadata(string.Empty));
 
         public static readonly DependencyProperty TrackCanvasSizeProperty = DependencyProperty.Register("TrackCanvasSize", typeof(Size), typeof(MainWindow), new PropertyMetadata(new Size() { Width = 100.0, Height = 100.0 }));
 
-        public static readonly DependencyProperty TrackCanvasWidthProperty = DependencyProperty.Register("TrackCanvasWidth", typeof(double), typeof(MainWindow), new PropertyMetadata(100.0));
+        public static readonly DependencyProperty TrackCanvasWidthProperty = DependencyProperty.Register("TrackCanvasWidth", typeof(double), typeof(MainWindow), new PropertyMetadata(100.0), TrackCanvasValidateCallback);
 
         public static readonly DependencyProperty TrackCanvasOriginProperty = DependencyProperty.Register("TrackCanvasOrigin", typeof(Point), typeof(MainWindow), new PropertyMetadata(new Point() { X = 0, Y = 0 }));
 
@@ -93,6 +99,7 @@ namespace SuperImposX
         public MainWindow()
         {
             InitializeComponent();
+            _instance = this;
             this.DataContext = this;
             this.TrackPointsTime.ItemsSource = _trackPointsTime;
         }
@@ -163,6 +170,16 @@ namespace SuperImposX
             SetCanvasSize(this.TrackCanvas, new Size() { Width = this.TrackCanvasWidth, Height = this.TrackCanvasWidth * aspect });
             SetCanvasOrigin(this.TrackCanvas, this.TrackCanvasOrigin);
             DrawGPXOnCanvas(_trackPoints, this.TrackCanvas, _trackPointsElapsedCount);
+        }
+
+        #endregion
+
+        #region Callbacks
+
+        public static bool TrackCanvasValidateCallback(object value)
+        {
+            _instance?.RedrawTrackCanvas();
+            return true;
         }
 
         #endregion
