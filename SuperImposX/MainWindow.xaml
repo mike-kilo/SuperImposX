@@ -115,7 +115,7 @@
                         <Button Content="Load..." Width="60" Margin="3" Click="TimeMomentsLoadClick" />
                         <Button Content="Remove selected" Width="100" Margin="3" Click="TimeMomentsClearClick" />
                     </StackPanel>
-                    <Button Content="Generate superimpose images" Click="GenerateSuperimposeImagesClick" />
+                    <Button Content="Generate superimpose image" Click="GenerateSuperimposeImagesClick" />
                 </StackPanel>
             </Grid>
         </GroupBox>
