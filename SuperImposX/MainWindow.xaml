@@ -115,6 +115,9 @@
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <WrapPanel>
+                                <WrapPanel.ToolTip>
+                                    <TextBlock Text="{Binding FileTime, StringFormat=HH\\:mm\\:ss}" />
+                                </WrapPanel.ToolTip>
                                 <TextBlock Text="{Binding ElapsedTime, StringFormat=hh\\:mm\\:ss}" FontWeight="Bold" />
                                 <TextBlock Width="10" />
                                 <TextBlock Text="{Binding Filename}" />

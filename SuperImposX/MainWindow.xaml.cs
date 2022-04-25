@@ -259,9 +259,14 @@ namespace SuperImposX
                 ofd.FileNames?
                     .Select(f => new { Filename = new System.IO.FileInfo(f).Name, LastWriteTime = new System.IO.FileInfo(f).LastWriteTime })
                     .Where(f => f.LastWriteTime.Add(timeMargin) >= _trackPoints?.First().Timestamp && f.LastWriteTime.Subtract(timeMargin) <= _trackPoints?.Last().Timestamp)
-                    .Select(f => new { Filename = f.Filename, Elapsed = f.LastWriteTime.Subtract(_trackPoints.First().Timestamp) })
+                    .Select(f => new { Filename = f.Filename, Elapsed = f.LastWriteTime.Subtract(_trackPoints.First().Timestamp), FileTime = f.LastWriteTime, })
                     .ToList()
-                    .ForEach(f => _trackPointsTime.Add(new Helpers.ElapsedPoint() { ElapsedTime = f.Elapsed < new TimeSpan(0) ? new TimeSpan(0) : f.Elapsed, Filename = System.IO.Path.GetFileNameWithoutExtension(f.Filename) }));
+                    .ForEach(f => _trackPointsTime.Add(new Helpers.ElapsedPoint() 
+                    { 
+                        ElapsedTime = f.Elapsed < new TimeSpan(0) ? new TimeSpan(0) : f.Elapsed, 
+                        Filename = System.IO.Path.GetFileNameWithoutExtension(f.Filename),
+                        FileTime = f.FileTime,
+                    }));
                 _trackPointsTime.Sort();
             }
         }
@@ -282,7 +287,7 @@ namespace SuperImposX
             var newTimeSpan = new TimeSpan(0);
             if (TimeSpan.TryParse(this.NewTimeSpan, out newTimeSpan))
             {
-                _trackPointsTime.Add(new Helpers.ElapsedPoint() { ElapsedTime = newTimeSpan, Filename = newTimeSpan.ToString().Replace(':','.') });
+                _trackPointsTime.Add(new Helpers.ElapsedPoint() { ElapsedTime = newTimeSpan, Filename = newTimeSpan.ToString().Replace(':','.'), FileTime = new DateTime(newTimeSpan.Ticks) });
                 _trackPointsTime.Sort();
                 this.NewTimeSpan = String.Empty;
             }
