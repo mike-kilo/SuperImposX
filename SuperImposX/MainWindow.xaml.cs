@@ -308,7 +308,7 @@ namespace SuperImposX
 
         private void GenerateSuperimposeImagesClick(object sender, RoutedEventArgs e)
         {
-            if (_trackPointsTime.Count < 1) return;
+            if (!_trackPointsTime.Any()) return;
             this.PreviewCanvas.SaveCanvasToPNG(
                 System.IO.Path.Combine(System.IO.Path.GetDirectoryName(this.CurrentFile) ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), 
                 $"{System.IO.Path.GetFileNameWithoutExtension(this.CurrentFile)}_{_trackPointsTime[this.TrackPointsTime.SelectedIndex].ElapsedTime.ToString().Replace(':', '.')}_{_trackPointsTime[this.TrackPointsTime.SelectedIndex].Filename}.png"));
