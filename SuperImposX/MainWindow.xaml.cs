@@ -49,35 +49,19 @@ namespace SuperImposX
         public Size TrackCanvasSize
         {
             get { return (Size)GetValue(TrackCanvasSizeProperty); }
-            set 
-            { 
-                SetValue(TrackCanvasSizeProperty, value);
-                this.TrackCanvas.UpdateLayout();
-            }
+            set { SetValue(TrackCanvasSizeProperty, value); }
         }
 
         public double TrackCanvasWidth
         {
             get { return (double)GetValue(TrackCanvasWidthProperty); }
-            set 
-            { 
-                SetValue(TrackCanvasWidthProperty, value);
-                if (_trackPoints == null) return;
-                var bounds = _trackPoints.GetBounds();
-                var aspect = (bounds.Max.Longitude - bounds.Min.Longitude) / (bounds.Max.Latitude - bounds.Min.Latitude);
-                SetCanvasSize(this.TrackCanvas, new Size() { Width = value, Height = value / aspect });
-            }
+            set { SetValue(TrackCanvasWidthProperty, value); }
         }
 
         public Point TrackCanvasOrigin
         {
             get { return (Point)GetValue(TrackCanvasOriginProperty); }
-            set 
-            { 
-                SetValue(TrackCanvasOriginProperty, value);
-                Canvas.SetLeft(this.TrackCanvas, value.X);
-                Canvas.SetTop(this.TrackCanvas, value.Y);
-            }
+            set { SetValue(TrackCanvasOriginProperty, value); }
         }
 
         public string NewTimeSpan
