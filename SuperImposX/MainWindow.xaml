@@ -91,22 +91,38 @@
         </GroupBox>
         <GroupBox Grid.Column="1" Grid.Row="1" Header="Moments" Margin="3" >
             <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-            <ListView x:Name="TrackPointsTime" x:FieldModifier="private" SelectionChanged="TrackPointsTimeSelected" SelectionMode="Single" >
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <WrapPanel>
-                            <TextBlock Text="{Binding ElapsedTime}" FontWeight="Bold" />
-                            <TextBlock Width="10" />
-                            <TextBlock Text="{Binding Filename}" />
-                        </WrapPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-                <StackPanel Grid.Row="1" Orientation="Vertical">
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Start at:" />
+                    <TextBlock Text="Finish at:" />
+                    <TextBlock Text="Elapsed:" />
+                </StackPanel>
+                <StackPanel Grid.Column="2" Orientation="Vertical">
+                    <TextBlock Text="{Binding RouteDateStart, Mode=OneWay, StringFormat=HH\\:mm\\:ss}" />
+                    <TextBlock Text="{Binding RouteDateFinish, Mode=OneWay, StringFormat=HH\\:mm\\:ss}" />
+                    <TextBlock Text="{Binding RouteTimeElapsed, Mode=OneWay, StringFormat=hh\\:mm\\:ss}" />
+                </StackPanel>
+                <ListView x:Name="TrackPointsTime" x:FieldModifier="private" Grid.ColumnSpan="3" Grid.Row="1" SelectionChanged="TrackPointsTimeSelected" SelectionMode="Single" >
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <WrapPanel>
+                                <TextBlock Text="{Binding ElapsedTime}" FontWeight="Bold" />
+                                <TextBlock Width="10" />
+                                <TextBlock Text="{Binding Filename}" />
+                            </WrapPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <StackPanel Grid.ColumnSpan="3" Grid.Row="2" Orientation="Vertical">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <TextBox Text="{Binding NewTimeSpan, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextChanged="NewTimeSpanChanged" Width="80" VerticalContentAlignment="Center" />
                         <Button Content="Add timespan" Width="80" Margin="3" Click="TimeMomentsAddClick" IsEnabled="{Binding NewTimeSpanIsValid}" />

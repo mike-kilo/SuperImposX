@@ -44,6 +44,12 @@ namespace SuperImposX
 
         public static readonly DependencyProperty NewTimeSpanIsValidProperty = DependencyProperty.Register("NewTimeSpanIsValid", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
+        public static readonly DependencyProperty RouteDateStartProperty = DependencyProperty.Register("RouteDateStart", typeof(DateTime), typeof(MainWindow), new PropertyMetadata(DateTime.MinValue));
+
+        public static readonly DependencyProperty RouteDateFinishProperty = DependencyProperty.Register("RouteDateFinish", typeof(DateTime), typeof(MainWindow), new PropertyMetadata(DateTime.MaxValue));
+
+        public static readonly DependencyProperty RouteTimeElapsedProperty = DependencyProperty.Register("RouteTimeElapsed", typeof(TimeSpan), typeof(MainWindow), new PropertyMetadata(new TimeSpan(0)));
+
         #endregion
 
         #region Properties
@@ -90,10 +96,28 @@ namespace SuperImposX
             set { SetValue(NewTimeSpanIsValidProperty, value); }
         }
 
+        public DateTime RouteDateStart
+        {
+            get { return (DateTime)GetValue(RouteDateStartProperty); }
+            set { SetValue(RouteDateStartProperty, value); }
+        }
+
+        public DateTime RouteDateFinish
+        {
+            get { return (DateTime)GetValue(RouteDateFinishProperty); }
+            set { SetValue(RouteDateFinishProperty, value); }
+        }
+
+        public TimeSpan RouteTimeElapsed
+        {
+            get { return (TimeSpan)GetValue(RouteTimeElapsedProperty); }
+            set { SetValue(RouteTimeElapsedProperty, value); }
+        }
+
         #endregion
 
         #region Private members
-        
+
         private static IEnumerable<GPXProcessing.TrackPoint>? _trackPoints;
         
         private static int _trackPointsElapsedCount = 0;
@@ -209,6 +233,9 @@ namespace SuperImposX
             this.CurrentFile = ofd.FileName;
 
             _trackPoints = GPXProcessing.ReadGPX(this.CurrentFile);
+            this.RouteDateStart = _trackPoints.First().Timestamp;
+            this.RouteDateFinish = _trackPoints.Last().Timestamp;
+            this.RouteTimeElapsed = this.RouteDateFinish.Subtract(this.RouteDateStart);
             this.RedrawTrackCanvas();
         }
 
