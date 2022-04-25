@@ -36,7 +36,9 @@ namespace SuperImposX
 
         public static readonly DependencyProperty TrackCanvasWidthProperty = DependencyProperty.Register("TrackCanvasWidth", typeof(double), typeof(MainWindow), new PropertyMetadata(100.0), TrackCanvasValidateCallback);
 
-        public static readonly DependencyProperty TrackCanvasOriginProperty = DependencyProperty.Register("TrackCanvasOrigin", typeof(Point), typeof(MainWindow), new PropertyMetadata(new Point() { X = 0, Y = 0 }));
+        public static readonly DependencyProperty TrackCanvasOriginXProperty = DependencyProperty.Register("TrackCanvasOriginX", typeof(double), typeof(MainWindow), new PropertyMetadata(0.0), TrackCanvasValidateCallback);
+
+        public static readonly DependencyProperty TrackCanvasOriginYProperty = DependencyProperty.Register("TrackCanvasOriginY", typeof(double), typeof(MainWindow), new PropertyMetadata(0.0), TrackCanvasValidateCallback);
 
         public static readonly DependencyProperty NewTimeSpanProperty = DependencyProperty.Register("NewTimeSpan", typeof(string), typeof(MainWindow), new PropertyMetadata(string.Empty));
 
@@ -64,10 +66,16 @@ namespace SuperImposX
             set { SetValue(TrackCanvasWidthProperty, value); }
         }
 
-        public Point TrackCanvasOrigin
+        public double TrackCanvasOriginX
         {
-            get { return (Point)GetValue(TrackCanvasOriginProperty); }
-            set { SetValue(TrackCanvasOriginProperty, value); }
+            get { return (double)GetValue(TrackCanvasOriginXProperty); }
+            set { SetValue(TrackCanvasOriginXProperty, value); }
+        }
+
+        public double TrackCanvasOriginY
+        {
+            get { return (double)GetValue(TrackCanvasOriginYProperty); }
+            set { SetValue(TrackCanvasOriginYProperty, value); }
         }
 
         public string NewTimeSpan
@@ -168,7 +176,7 @@ namespace SuperImposX
             var bounds = _trackPoints.GetBounds();
             var aspect = (bounds.Max.Latitude - bounds.Min.Latitude) / (bounds.Max.Longitude - bounds.Min.Longitude);
             SetCanvasSize(this.TrackCanvas, new Size() { Width = this.TrackCanvasWidth, Height = this.TrackCanvasWidth * aspect });
-            SetCanvasOrigin(this.TrackCanvas, this.TrackCanvasOrigin);
+            SetCanvasOrigin(this.TrackCanvas, new Point() { X = this.TrackCanvasOriginX, Y = this.TrackCanvasOriginY });
             DrawGPXOnCanvas(_trackPoints, this.TrackCanvas, _trackPointsElapsedCount);
         }
 
@@ -201,11 +209,6 @@ namespace SuperImposX
             this.CurrentFile = ofd.FileName;
 
             _trackPoints = GPXProcessing.ReadGPX(this.CurrentFile);
-            this.RedrawTrackCanvas();
-        }
-
-        private void RedrawClick(object sender, RoutedEventArgs e)
-        {
             this.RedrawTrackCanvas();
         }
 
