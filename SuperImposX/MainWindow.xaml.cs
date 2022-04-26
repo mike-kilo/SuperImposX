@@ -22,19 +22,33 @@ namespace SuperImposX
     /// </summary>
     public partial class MainWindow : Window
     {
+        #region Singleton
+
+        private static MainWindow? _instance;
+
+        #endregion
+
         #region Dependency properties
 
         public static readonly DependencyProperty CurrentFileProperty = DependencyProperty.Register("CurrentFile", typeof(string), typeof(MainWindow), new PropertyMetadata(string.Empty));
 
         public static readonly DependencyProperty TrackCanvasSizeProperty = DependencyProperty.Register("TrackCanvasSize", typeof(Size), typeof(MainWindow), new PropertyMetadata(new Size() { Width = 100.0, Height = 100.0 }));
 
-        public static readonly DependencyProperty TrackCanvasWidthProperty = DependencyProperty.Register("TrackCanvasWidth", typeof(double), typeof(MainWindow), new PropertyMetadata(100.0));
+        public static readonly DependencyProperty TrackCanvasWidthProperty = DependencyProperty.Register("TrackCanvasWidth", typeof(double), typeof(MainWindow), new PropertyMetadata(100.0), TrackCanvasValidateCallback);
 
-        public static readonly DependencyProperty TrackCanvasOriginProperty = DependencyProperty.Register("TrackCanvasOrigin", typeof(Point), typeof(MainWindow), new PropertyMetadata(new Point() { X = 0, Y = 0 }));
+        public static readonly DependencyProperty TrackCanvasOriginXProperty = DependencyProperty.Register("TrackCanvasOriginX", typeof(double), typeof(MainWindow), new PropertyMetadata(0.0), TrackCanvasValidateCallback);
+
+        public static readonly DependencyProperty TrackCanvasOriginYProperty = DependencyProperty.Register("TrackCanvasOriginY", typeof(double), typeof(MainWindow), new PropertyMetadata(0.0), TrackCanvasValidateCallback);
 
         public static readonly DependencyProperty NewTimeSpanProperty = DependencyProperty.Register("NewTimeSpan", typeof(string), typeof(MainWindow), new PropertyMetadata(string.Empty));
 
         public static readonly DependencyProperty NewTimeSpanIsValidProperty = DependencyProperty.Register("NewTimeSpanIsValid", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+
+        public static readonly DependencyProperty RouteDateStartProperty = DependencyProperty.Register("RouteDateStart", typeof(DateTime), typeof(MainWindow), new PropertyMetadata(DateTime.MinValue));
+
+        public static readonly DependencyProperty RouteDateFinishProperty = DependencyProperty.Register("RouteDateFinish", typeof(DateTime), typeof(MainWindow), new PropertyMetadata(DateTime.MaxValue));
+
+        public static readonly DependencyProperty RouteTimeElapsedProperty = DependencyProperty.Register("RouteTimeElapsed", typeof(TimeSpan), typeof(MainWindow), new PropertyMetadata(new TimeSpan(0)));
 
         #endregion
 
@@ -49,35 +63,25 @@ namespace SuperImposX
         public Size TrackCanvasSize
         {
             get { return (Size)GetValue(TrackCanvasSizeProperty); }
-            set 
-            { 
-                SetValue(TrackCanvasSizeProperty, value);
-                this.TrackCanvas.UpdateLayout();
-            }
+            set { SetValue(TrackCanvasSizeProperty, value); }
         }
 
         public double TrackCanvasWidth
         {
             get { return (double)GetValue(TrackCanvasWidthProperty); }
-            set 
-            { 
-                SetValue(TrackCanvasWidthProperty, value);
-                if (_trackPoints == null) return;
-                var bounds = _trackPoints.GetBounds();
-                var aspect = (bounds.Max.Longitude - bounds.Min.Longitude) / (bounds.Max.Latitude - bounds.Min.Latitude);
-                SetCanvasSize(this.TrackCanvas, new Size() { Width = value, Height = value / aspect });
-            }
+            set { SetValue(TrackCanvasWidthProperty, value); }
         }
 
-        public Point TrackCanvasOrigin
+        public double TrackCanvasOriginX
         {
-            get { return (Point)GetValue(TrackCanvasOriginProperty); }
-            set 
-            { 
-                SetValue(TrackCanvasOriginProperty, value);
-                Canvas.SetLeft(this.TrackCanvas, value.X);
-                Canvas.SetTop(this.TrackCanvas, value.Y);
-            }
+            get { return (double)GetValue(TrackCanvasOriginXProperty); }
+            set { SetValue(TrackCanvasOriginXProperty, value); }
+        }
+
+        public double TrackCanvasOriginY
+        {
+            get { return (double)GetValue(TrackCanvasOriginYProperty); }
+            set { SetValue(TrackCanvasOriginYProperty, value); }
         }
 
         public string NewTimeSpan
@@ -92,10 +96,28 @@ namespace SuperImposX
             set { SetValue(NewTimeSpanIsValidProperty, value); }
         }
 
+        public DateTime RouteDateStart
+        {
+            get { return (DateTime)GetValue(RouteDateStartProperty); }
+            set { SetValue(RouteDateStartProperty, value); }
+        }
+
+        public DateTime RouteDateFinish
+        {
+            get { return (DateTime)GetValue(RouteDateFinishProperty); }
+            set { SetValue(RouteDateFinishProperty, value); }
+        }
+
+        public TimeSpan RouteTimeElapsed
+        {
+            get { return (TimeSpan)GetValue(RouteTimeElapsedProperty); }
+            set { SetValue(RouteTimeElapsedProperty, value); }
+        }
+
         #endregion
 
         #region Private members
-        
+
         private static IEnumerable<GPXProcessing.TrackPoint>? _trackPoints;
         
         private static int _trackPointsElapsedCount = 0;
@@ -109,6 +131,7 @@ namespace SuperImposX
         public MainWindow()
         {
             InitializeComponent();
+            _instance = this;
             this.DataContext = this;
             this.TrackPointsTime.ItemsSource = _trackPointsTime;
         }
@@ -177,8 +200,18 @@ namespace SuperImposX
             var bounds = _trackPoints.GetBounds();
             var aspect = (bounds.Max.Latitude - bounds.Min.Latitude) / (bounds.Max.Longitude - bounds.Min.Longitude);
             SetCanvasSize(this.TrackCanvas, new Size() { Width = this.TrackCanvasWidth, Height = this.TrackCanvasWidth * aspect });
-            SetCanvasOrigin(this.TrackCanvas, this.TrackCanvasOrigin);
+            SetCanvasOrigin(this.TrackCanvas, new Point() { X = this.TrackCanvasOriginX, Y = this.TrackCanvasOriginY });
             DrawGPXOnCanvas(_trackPoints, this.TrackCanvas, _trackPointsElapsedCount);
+        }
+
+        #endregion
+
+        #region Callbacks
+
+        public static bool TrackCanvasValidateCallback(object value)
+        {
+            _instance?.RedrawTrackCanvas();
+            return true;
         }
 
         #endregion
@@ -200,11 +233,9 @@ namespace SuperImposX
             this.CurrentFile = ofd.FileName;
 
             _trackPoints = GPXProcessing.ReadGPX(this.CurrentFile);
-            this.RedrawTrackCanvas();
-        }
-
-        private void RedrawClick(object sender, RoutedEventArgs e)
-        {
+            this.RouteDateStart = _trackPoints.First().Timestamp;
+            this.RouteDateFinish = _trackPoints.Last().Timestamp;
+            this.RouteTimeElapsed = this.RouteDateFinish.Subtract(this.RouteDateStart);
             this.RedrawTrackCanvas();
         }
 
@@ -228,9 +259,14 @@ namespace SuperImposX
                 ofd.FileNames?
                     .Select(f => new { Filename = new System.IO.FileInfo(f).Name, LastWriteTime = new System.IO.FileInfo(f).LastWriteTime })
                     .Where(f => f.LastWriteTime.Add(timeMargin) >= _trackPoints?.First().Timestamp && f.LastWriteTime.Subtract(timeMargin) <= _trackPoints?.Last().Timestamp)
-                    .Select(f => new { Filename = f.Filename, Elapsed = f.LastWriteTime.Subtract(_trackPoints.First().Timestamp) })
+                    .Select(f => new { Filename = f.Filename, Elapsed = f.LastWriteTime.Subtract(_trackPoints.First().Timestamp), FileTime = f.LastWriteTime, })
                     .ToList()
-                    .ForEach(f => _trackPointsTime.Add(new Helpers.ElapsedPoint() { ElapsedTime = f.Elapsed < new TimeSpan(0) ? new TimeSpan(0) : f.Elapsed, Filename = System.IO.Path.GetFileNameWithoutExtension(f.Filename) }));
+                    .ForEach(f => _trackPointsTime.Add(new Helpers.ElapsedPoint() 
+                    { 
+                        ElapsedTime = f.Elapsed < new TimeSpan(0) ? new TimeSpan(0) : f.Elapsed, 
+                        Filename = System.IO.Path.GetFileNameWithoutExtension(f.Filename),
+                        FileTime = f.FileTime,
+                    }));
                 _trackPointsTime.Sort();
             }
         }
@@ -251,7 +287,7 @@ namespace SuperImposX
             var newTimeSpan = new TimeSpan(0);
             if (TimeSpan.TryParse(this.NewTimeSpan, out newTimeSpan))
             {
-                _trackPointsTime.Add(new Helpers.ElapsedPoint() { ElapsedTime = newTimeSpan, Filename = newTimeSpan.ToString().Replace(':','.') });
+                _trackPointsTime.Add(new Helpers.ElapsedPoint() { ElapsedTime = newTimeSpan, Filename = newTimeSpan.ToString().Replace(':','.'), FileTime = new DateTime(newTimeSpan.Ticks) });
                 _trackPointsTime.Sort();
                 this.NewTimeSpan = String.Empty;
             }
@@ -272,7 +308,7 @@ namespace SuperImposX
 
         private void GenerateSuperimposeImagesClick(object sender, RoutedEventArgs e)
         {
-            if (_trackPointsTime.Count < 1) return;
+            if (!_trackPointsTime.Any()) return;
             this.PreviewCanvas.SaveCanvasToPNG(
                 System.IO.Path.Combine(System.IO.Path.GetDirectoryName(this.CurrentFile) ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), 
                 $"{System.IO.Path.GetFileNameWithoutExtension(this.CurrentFile)}_{_trackPointsTime[this.TrackPointsTime.SelectedIndex].ElapsedTime.ToString().Replace(':', '.')}_{_trackPointsTime[this.TrackPointsTime.SelectedIndex].Filename}.png"));

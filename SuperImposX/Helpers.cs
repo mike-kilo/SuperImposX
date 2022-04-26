@@ -31,6 +31,8 @@ namespace SuperImposX
 
             public string Filename { get; set; }
 
+            public DateTime FileTime { get; set; }
+
             public int CompareTo(ElapsedPoint that)
             {
                 return this.ElapsedTime.CompareTo(that.ElapsedTime);

@@ -55,7 +55,7 @@
                 <TextBlock Text="Y:" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Right" />
                 <Slider Grid.Column="3" Grid.Row="0" 
                         Width="100"
-                        Value="{Binding TrackCanvasOrigin.X, Mode=TwoWay}" LargeChange="10" SmallChange="1"
+                        Value="{Binding TrackCanvasOriginX, Mode=TwoWay}" LargeChange="10" SmallChange="1"
                         Minimum="0" Maximum="{Binding ElementName=PreviewCanvas, Path=ActualWidth}" 
                         AutoToolTipPlacement="BottomRight" AutoToolTipPrecision="0" >
                     <Slider.ToolTip>
@@ -66,7 +66,7 @@
                 </Slider>
                 <Slider Grid.Column="3" Grid.Row="1" 
                         Width="100"
-                        Value="{Binding TrackCanvasOrigin.Y, Mode=TwoWay}" LargeChange="10" SmallChange="1"
+                        Value="{Binding TrackCanvasOriginY, Mode=TwoWay}" LargeChange="10" SmallChange="1"
                         Minimum="0" Maximum="{Binding ElementName=PreviewCanvas, Path=ActualWidth}" 
                         AutoToolTipPlacement="BottomRight" AutoToolTipPrecision="0" >
                     <Slider.ToolTip>
@@ -75,9 +75,8 @@
                                  ContentStringFormat=" {0:0}" />
                     </Slider.ToolTip>
                 </Slider>
-                <Button Grid.Column="4" HorizontalAlignment="Right" Content="Redraw" Width="80" Click="RedrawClick" />
                 <Border Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="2" BorderThickness="1" BorderBrush="Black" Width="640" Height="360" >
-                    <Canvas x:Name="PreviewCanvas" x:FieldModifier="private" Width="1280" Height="720" Background="Transparent" >
+                    <Canvas x:Name="PreviewCanvas" x:FieldModifier="private" Width="1280" Height="720" Background="Transparent" ClipToBounds="True" >
                         <Canvas.LayoutTransform>
                             <ScaleTransform ScaleX="0.5" ScaleY="0.5" />
                         </Canvas.LayoutTransform>
@@ -92,22 +91,41 @@
         </GroupBox>
         <GroupBox Grid.Column="1" Grid.Row="1" Header="Moments" Margin="3" >
             <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-            <ListView x:Name="TrackPointsTime" x:FieldModifier="private" SelectionChanged="TrackPointsTimeSelected" SelectionMode="Single" >
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <WrapPanel>
-                            <TextBlock Text="{Binding ElapsedTime}" FontWeight="Bold" />
-                            <TextBlock Width="10" />
-                            <TextBlock Text="{Binding Filename}" />
-                        </WrapPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-                <StackPanel Grid.Row="1" Orientation="Vertical">
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Start at:" />
+                    <TextBlock Text="Finish at:" />
+                    <TextBlock Text="Elapsed:" />
+                </StackPanel>
+                <StackPanel Grid.Column="2" Orientation="Vertical">
+                    <TextBlock Text="{Binding RouteDateStart, Mode=OneWay, StringFormat=HH\\:mm\\:ss}" />
+                    <TextBlock Text="{Binding RouteDateFinish, Mode=OneWay, StringFormat=HH\\:mm\\:ss}" />
+                    <TextBlock Text="{Binding RouteTimeElapsed, Mode=OneWay, StringFormat=hh\\:mm\\:ss}" />
+                </StackPanel>
+                <ListView x:Name="TrackPointsTime" x:FieldModifier="private" Grid.ColumnSpan="3" Grid.Row="1" SelectionChanged="TrackPointsTimeSelected" SelectionMode="Single" >
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <WrapPanel>
+                                <WrapPanel.ToolTip>
+                                    <TextBlock Text="{Binding FileTime, StringFormat=HH\\:mm\\:ss}" />
+                                </WrapPanel.ToolTip>
+                                <TextBlock Text="{Binding ElapsedTime, StringFormat=hh\\:mm\\:ss}" FontWeight="Bold" />
+                                <TextBlock Width="10" />
+                                <TextBlock Text="{Binding Filename}" />
+                            </WrapPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <StackPanel Grid.ColumnSpan="3" Grid.Row="2" Orientation="Vertical">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <TextBox Text="{Binding NewTimeSpan, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextChanged="NewTimeSpanChanged" Width="80" VerticalContentAlignment="Center" />
                         <Button Content="Add timespan" Width="80" Margin="3" Click="TimeMomentsAddClick" IsEnabled="{Binding NewTimeSpanIsValid}" />
@@ -116,7 +134,7 @@
                         <Button Content="Load..." Width="60" Margin="3" Click="TimeMomentsLoadClick" />
                         <Button Content="Remove selected" Width="100" Margin="3" Click="TimeMomentsClearClick" />
                     </StackPanel>
-                    <Button Content="Generate superimpose images" Click="GenerateSuperimposeImagesClick" />
+                    <Button Content="Generate superimpose image" Click="GenerateSuperimposeImagesClick" />
                 </StackPanel>
             </Grid>
         </GroupBox>
