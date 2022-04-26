@@ -29,10 +29,10 @@ namespace SuperImposX
                 {
                     return new TrackPoint
                     {
-                        Latitude = double.Parse(p.Attribute("lat")?.Value ?? "0"),
-                        Longitude = double.Parse(p.Attribute("lon")?.Value ?? "0"),
-                        Elevation = double.Parse(p.Elements().Where(e => e.Name.LocalName == "ele").First()?.Value ?? "0"),
-                        Timestamp = DateTime.Parse(p.Elements().Where(e => e.Name.LocalName == "time").First()?.Value ?? DateTime.Now.ToString()),
+                        Latitude = double.Parse(p.Attribute("lat")?.Value ?? "0", System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture),
+                        Longitude = double.Parse(p.Attribute("lon")?.Value ?? "0", System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture),
+                        Elevation = double.Parse(p.Elements().Where(e => e.Name.LocalName == "ele").First()?.Value ?? "0", System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture),
+                        Timestamp = DateTime.Parse(p.Elements().Where(e => e.Name.LocalName == "time").First()?.Value ?? DateTime.Now.ToString(), System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal),
                     };
                 });
         }
