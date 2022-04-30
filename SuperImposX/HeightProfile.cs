@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -60,6 +60,7 @@ namespace SuperImposX
         private HeightProfile()
         {
             this.HeightProfileCanvas = new Canvas();
+            this.HeightProfileCanvas.ClipToBounds = true;
             this.Points = new List<ElevationPoint>();
         }
     }
