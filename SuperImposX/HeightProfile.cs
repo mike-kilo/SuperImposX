@@ -1,9 +1,12 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using static SuperImposX.GPXProcessing;
 
 namespace SuperImposX
@@ -62,6 +65,39 @@ namespace SuperImposX
             this.HeightProfileCanvas = new Canvas();
             this.HeightProfileCanvas.ClipToBounds = true;
             this.Points = new List<ElevationPoint>();
+        }
+
+        public void Redraw()
+        {
+            this.HeightProfileCanvas.Children.Clear();
+            var elevationBase = this.Points.MinBy(p => p.Elevation).Elevation - 10.0;
+            var elevationTop = this.Points.MaxBy(p => p.Elevation).Elevation + 10.0;
+
+            var cumulativeDistance = 0.0;
+            var distances = this.Points.Select(p => { cumulativeDistance += p.Distance; return cumulativeDistance; }).ToList();
+
+            var scale = new Size() { Width = this.HeightProfileCanvas.ActualWidth / this.Points.Select(P => P.Distance).Sum(), Height = this.HeightProfileCanvas.ActualHeight / ( elevationTop - elevationBase) };
+            var points = distances.Zip(this.Points, (d, p) => new Point()
+                {
+                    X = d * scale.Width,
+                    Y = (elevationTop - p.Elevation) * scale.Height,
+                })
+                .Prepend(new Point() { X = 0, Y = this.HeightProfileCanvas.ActualHeight })
+                .Append(new Point() { X = this.HeightProfileCanvas.ActualWidth, Y = this.HeightProfileCanvas.ActualHeight });
+
+            var height = new Polygon
+            {
+                Points = new PointCollection(points),
+                StrokeStartLineCap = PenLineCap.Round,
+                StrokeLineJoin = PenLineJoin.Round,
+                StrokeEndLineCap = PenLineCap.Round,
+                StrokeDashCap = PenLineCap.Round,
+            };
+
+            height.Fill = Brushes.Black;
+            height.Opacity = 0.309;
+
+            this.HeightProfileCanvas.Children.Add(height);
         }
     }
 }
