@@ -136,6 +136,7 @@ namespace SuperImposX
             _instance = this;
             this.DataContext = this;
             this.TrackPointsTime.ItemsSource = _trackPointsTime;
+            this.PreviewCanvas.Children.Add(_heightProfile.HeightProfileCanvas);
         }
 
         #endregion
