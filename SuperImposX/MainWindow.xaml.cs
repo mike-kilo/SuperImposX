@@ -124,6 +124,8 @@ namespace SuperImposX
 
         private static ObservableCollection<Helpers.ElapsedPoint> _trackPointsTime = new ObservableCollection<Helpers.ElapsedPoint>();
 
+        private static HeightProfile _heightProfile = HeightProfile.Instance;
+
         #endregion
 
         #region Constructors
@@ -236,6 +238,10 @@ namespace SuperImposX
             this.RouteDateStart = _trackPoints.First().Timestamp;
             this.RouteDateFinish = _trackPoints.Last().Timestamp;
             this.RouteTimeElapsed = this.RouteDateFinish.Subtract(this.RouteDateStart);
+
+            _heightProfile.Points.Add(new HeightProfile.ElevationPoint { Elevation = _trackPoints.First().Elevation ?? 0.0, Distance = 0.0 });
+            _heightProfile.Points.AddRange(_trackPoints
+                .Zip(_trackPoints.Skip(1), (p, n) => new HeightProfile.ElevationPoint { Elevation = n.Elevation ?? 0.0, Distance = n.GetDistance(p) }));
             this.RedrawTrackCanvas();
         }
 
