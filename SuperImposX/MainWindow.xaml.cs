@@ -207,6 +207,18 @@ namespace SuperImposX
             DrawGPXOnCanvas(_trackPoints, this.TrackCanvas, _trackPointsElapsedCount);
         }
 
+        private void RedrawHeightProfile()
+        {
+            if (_heightProfile == null || !_heightProfile.Points.Any()) return;
+            _heightProfile.HeightProfileCanvas.Width = 640;
+            _heightProfile.HeightProfileCanvas.Height = 100;
+            Canvas.SetLeft(_heightProfile.HeightProfileCanvas, 320);
+            Canvas.SetTop(_heightProfile.HeightProfileCanvas, 610);
+            _heightProfile.HeightProfileCanvas.UpdateLayout();
+
+            _heightProfile.Redraw();
+        }
+
         #endregion
 
         #region Callbacks
@@ -245,6 +257,7 @@ namespace SuperImposX
             _heightProfile.Points.AddRange(_trackPoints
                 .Zip(_trackPoints.Skip(1), (p, n) => new HeightProfile.ElevationPoint { Elevation = n.Elevation ?? 0.0, Distance = n.GetDistance(p) }));
             this.RedrawTrackCanvas();
+            this.RedrawHeightProfile();
         }
 
         private void TimeMomentsLoadClick(object sender, RoutedEventArgs e)
@@ -288,6 +301,7 @@ namespace SuperImposX
                 .Count() ?? 0;
 
             this.RedrawTrackCanvas();
+            this.RedrawHeightProfile();
         }
 
         private void TimeMomentsAddClick(object sender, RoutedEventArgs e)
