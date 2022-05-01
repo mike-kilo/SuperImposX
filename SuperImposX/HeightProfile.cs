@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -82,8 +82,8 @@ namespace SuperImposX
                     X = d * scale.Width,
                     Y = (elevationTop - p.Elevation) * scale.Height,
                 })
-                .Prepend(new Point() { X = 0, Y = this.HeightProfileCanvas.ActualHeight })
-                .Append(new Point() { X = this.HeightProfileCanvas.ActualWidth, Y = this.HeightProfileCanvas.ActualHeight });
+                .Prepend(new Point() { X = 0, Y = (elevationTop - elevationBase) * scale.Height })
+                .Append(new Point() { X = this.HeightProfileCanvas.ActualWidth, Y = (elevationTop - elevationBase) * scale.Height });
 
             var height = new Polygon
             {
