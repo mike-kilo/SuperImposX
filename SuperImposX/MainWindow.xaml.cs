@@ -302,7 +302,7 @@ namespace SuperImposX
                 .Count() ?? 0;
 
             this.RedrawTrackCanvas();
-            this.RedrawHeightProfile();
+            this._heightProfile.Redraw(_trackPointsElapsedCount);
         }
 
         private void TimeMomentsAddClick(object sender, RoutedEventArgs e)
