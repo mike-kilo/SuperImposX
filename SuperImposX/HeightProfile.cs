@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,38 +33,30 @@ namespace SuperImposX
 
     internal class HeightProfile
     {
-        public struct ElevationPoint
+        private struct ElevationPoint
         {
             public double Elevation { get; set; }
 
             public double Distance { get; set; }
         }
 
-        private static HeightProfile _instance;
-
-        public static HeightProfile Instance
-        {
-            get
-            {
-                if (_instance == null) _instance = new HeightProfile();
-                return _instance;
-            }
-
-            private set
-            {
-                _instance = value;
-            }
-        }
-
         public Canvas HeightProfileCanvas { get; private set; }
 
-        public List<ElevationPoint> Points { get; set; }
+        private List<ElevationPoint> Points { get; set; }
 
-        private HeightProfile()
+        private static List<ElevationPoint> ConvertToElevationPoints(IEnumerable<TrackPoint> points)
+        {
+            return points
+                .Zip(points.Skip(1), (p, n) => new ElevationPoint { Elevation = n.Elevation ?? 0.0, Distance = n.GetDistance(p) })
+                .Prepend(new ElevationPoint { Elevation = points.First().Elevation ?? 0.0, Distance = 0.0 })
+                .ToList();
+        }
+
+        public HeightProfile(IEnumerable<TrackPoint> points)
         {
             this.HeightProfileCanvas = new Canvas();
             this.HeightProfileCanvas.ClipToBounds = true;
-            this.Points = new List<ElevationPoint>();
+            this.Points = ConvertToElevationPoints(points);
         }
 
         public void Redraw()

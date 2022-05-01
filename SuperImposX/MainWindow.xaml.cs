@@ -124,7 +124,7 @@ namespace SuperImposX
 
         private static ObservableCollection<Helpers.ElapsedPoint> _trackPointsTime = new ObservableCollection<Helpers.ElapsedPoint>();
 
-        private static HeightProfile _heightProfile = HeightProfile.Instance;
+        private HeightProfile _heightProfile = null;
 
         #endregion
 
@@ -136,7 +136,6 @@ namespace SuperImposX
             _instance = this;
             this.DataContext = this;
             this.TrackPointsTime.ItemsSource = _trackPointsTime;
-            this.PreviewCanvas.Children.Add(_heightProfile.HeightProfileCanvas);
         }
 
         #endregion
@@ -209,7 +208,7 @@ namespace SuperImposX
 
         private void RedrawHeightProfile()
         {
-            if (_heightProfile == null || !_heightProfile.Points.Any()) return;
+            if (_heightProfile == null) return;
             _heightProfile.HeightProfileCanvas.Width = 640;
             _heightProfile.HeightProfileCanvas.Height = 100;
             Canvas.SetLeft(_heightProfile.HeightProfileCanvas, 320);
@@ -252,10 +251,12 @@ namespace SuperImposX
             this.RouteDateFinish = _trackPoints.Last().Timestamp;
             this.RouteTimeElapsed = this.RouteDateFinish.Subtract(this.RouteDateStart);
 
-            _heightProfile.Points.RemoveAll(p => true);
-            _heightProfile.Points.Add(new HeightProfile.ElevationPoint { Elevation = _trackPoints.First().Elevation ?? 0.0, Distance = 0.0 });
-            _heightProfile.Points.AddRange(_trackPoints
-                .Zip(_trackPoints.Skip(1), (p, n) => new HeightProfile.ElevationPoint { Elevation = n.Elevation ?? 0.0, Distance = n.GetDistance(p) }));
+            
+            if (this._heightProfile != null)
+                this.PreviewCanvas.Children.Remove(this._heightProfile.HeightProfileCanvas);
+            this._heightProfile = new HeightProfile(_trackPoints);
+            this.PreviewCanvas.Children.Add(_heightProfile.HeightProfileCanvas);
+
             this.RedrawTrackCanvas();
             this.RedrawHeightProfile();
         }
