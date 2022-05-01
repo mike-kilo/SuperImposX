@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -42,7 +42,7 @@ namespace SuperImposX
 
         public Canvas HeightProfileCanvas { get; private set; }
 
-        private List<ElevationPoint> Points { get; set; }
+        private List<ElevationPoint> _points { get; set; }
 
         private static List<ElevationPoint> ConvertToElevationPoints(IEnumerable<TrackPoint> points)
         {
@@ -56,20 +56,20 @@ namespace SuperImposX
         {
             this.HeightProfileCanvas = new Canvas();
             this.HeightProfileCanvas.ClipToBounds = true;
-            this.Points = ConvertToElevationPoints(points);
+            this.HeightProfileCanvas.Background = new SolidColorBrush(Colors.LightGray) { Opacity = 0.309 };
+            this._points = ConvertToElevationPoints(points);
         }
 
         public void Redraw()
         {
-            this.HeightProfileCanvas.Children.Clear();
-            var elevationBase = this.Points.MinBy(p => p.Elevation).Elevation - 10.0;
-            var elevationTop = this.Points.MaxBy(p => p.Elevation).Elevation + 10.0;
+            var elevationBase = this._points.MinBy(p => p.Elevation).Elevation - 10.0;
+            var elevationTop = this._points.MaxBy(p => p.Elevation).Elevation + 10.0;
 
             var cumulativeDistance = 0.0;
-            var distances = this.Points.Select(p => { cumulativeDistance += p.Distance; return cumulativeDistance; }).ToList();
+            var distances = this._points.Select(p => { cumulativeDistance += p.Distance; return cumulativeDistance; }).ToList();
 
-            var scale = new Size() { Width = this.HeightProfileCanvas.ActualWidth / this.Points.Select(P => P.Distance).Sum(), Height = this.HeightProfileCanvas.ActualHeight / ( elevationTop - elevationBase) };
-            var points = distances.Zip(this.Points, (d, p) => new Point()
+            var scale = new Size() { Width = this.HeightProfileCanvas.ActualWidth / this._points.Select(P => P.Distance).Sum(), Height = this.HeightProfileCanvas.ActualHeight / (elevationTop - elevationBase) };
+            var points = distances.Zip(this._points, (d, p) => new Point()
                 {
                     X = d * scale.Width,
                     Y = (elevationTop - p.Elevation) * scale.Height,
