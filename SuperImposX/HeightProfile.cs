@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -44,6 +44,10 @@ namespace SuperImposX
 
         private List<ElevationPoint> _points { get; set; }
 
+        private Polygon _heightProfileTotal { get; set; }
+
+        private Polygon _heightProfileElapsed { get; set; }
+
         private static List<ElevationPoint> ConvertToElevationPoints(IEnumerable<TrackPoint> points)
         {
             return points
@@ -60,7 +64,7 @@ namespace SuperImposX
             this._points = ConvertToElevationPoints(points);
         }
 
-        public void Redraw()
+        private Polygon GenerateHeightPolygon(Brush brush)
         {
             var elevationBase = this._points.MinBy(p => p.Elevation).Elevation - 10.0;
             var elevationTop = this._points.MaxBy(p => p.Elevation).Elevation + 10.0;
@@ -70,26 +74,51 @@ namespace SuperImposX
 
             var scale = new Size() { Width = this.HeightProfileCanvas.ActualWidth / this._points.Select(P => P.Distance).Sum(), Height = this.HeightProfileCanvas.ActualHeight / (elevationTop - elevationBase) };
             var points = distances.Zip(this._points, (d, p) => new Point()
-                {
-                    X = d * scale.Width,
-                    Y = (elevationTop - p.Elevation) * scale.Height,
-                })
+            {
+                X = d * scale.Width,
+                Y = (elevationTop - p.Elevation) * scale.Height,
+            })
                 .Prepend(new Point() { X = 0, Y = (elevationTop - elevationBase) * scale.Height })
                 .Append(new Point() { X = this.HeightProfileCanvas.ActualWidth, Y = (elevationTop - elevationBase) * scale.Height });
 
-            var height = new Polygon
+            return new Polygon
             {
                 Points = new PointCollection(points),
                 StrokeStartLineCap = PenLineCap.Round,
                 StrokeLineJoin = PenLineJoin.Round,
                 StrokeEndLineCap = PenLineCap.Round,
                 StrokeDashCap = PenLineCap.Round,
+                Fill = brush,
+            };
+        }
+
+        public void Redraw(int elapsedPoints = 0)
+        {
+            if (this._heightProfileTotal == null)
+            {
+                this._heightProfileTotal = this.GenerateHeightPolygon(new SolidColorBrush(Colors.LightGray) { Opacity = 0.309 });
+                this.HeightProfileCanvas.Children.Add(this._heightProfileTotal);
+            }
+
+            if (this._heightProfileElapsed == null)
+            {
+                this._heightProfileElapsed = this.GenerateHeightPolygon(new SolidColorBrush(Colors.White) { Opacity = 0.618 });
+                this.HeightProfileCanvas.Children.Add(this._heightProfileElapsed);
+            }
+
+            this._heightProfileTotal.Clip = new RectangleGeometry()
+            {
+                Rect = new Rect(
+                    new Point() { X = this.HeightProfileCanvas.ActualWidth * elapsedPoints / this._points.Count, Y = 0 },
+                    new Point() { X = this.HeightProfileCanvas.ActualWidth, Y = this.HeightProfileCanvas.ActualHeight }),
             };
 
-            height.Fill = Brushes.Black;
-            height.Opacity = 0.309;
-
-            this.HeightProfileCanvas.Children.Add(height);
+            this._heightProfileElapsed.Clip = new RectangleGeometry()
+            {
+                Rect = new Rect(
+                    new Point() { X = 0, Y = 0 },
+                    new Point() { X = this.HeightProfileCanvas.ActualWidth * elapsedPoints / this._points.Count, Y = this.HeightProfileCanvas.ActualHeight })
+            };
         }
     }
 }
