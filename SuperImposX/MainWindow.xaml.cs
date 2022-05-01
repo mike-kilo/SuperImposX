@@ -124,6 +124,8 @@ namespace SuperImposX
 
         private static ObservableCollection<Helpers.ElapsedPoint> _trackPointsTime = new ObservableCollection<Helpers.ElapsedPoint>();
 
+        private HeightProfile _heightProfile = null;
+
         #endregion
 
         #region Constructors
@@ -204,6 +206,18 @@ namespace SuperImposX
             DrawGPXOnCanvas(_trackPoints, this.TrackCanvas, _trackPointsElapsedCount);
         }
 
+        private void RedrawHeightProfile()
+        {
+            if (_heightProfile == null) return;
+            _heightProfile.HeightProfileCanvas.Width = 640;
+            _heightProfile.HeightProfileCanvas.Height = 100;
+            Canvas.SetLeft(_heightProfile.HeightProfileCanvas, 320);
+            Canvas.SetTop(_heightProfile.HeightProfileCanvas, 610);
+            _heightProfile.HeightProfileCanvas.UpdateLayout();
+
+            _heightProfile.Redraw();
+        }
+
         #endregion
 
         #region Callbacks
@@ -236,7 +250,15 @@ namespace SuperImposX
             this.RouteDateStart = _trackPoints.First().Timestamp;
             this.RouteDateFinish = _trackPoints.Last().Timestamp;
             this.RouteTimeElapsed = this.RouteDateFinish.Subtract(this.RouteDateStart);
+
+            
+            if (this._heightProfile != null)
+                this.PreviewCanvas.Children.Remove(this._heightProfile.HeightProfileCanvas);
+            this._heightProfile = new HeightProfile(_trackPoints);
+            this.PreviewCanvas.Children.Add(_heightProfile.HeightProfileCanvas);
+
             this.RedrawTrackCanvas();
+            this.RedrawHeightProfile();
         }
 
         private void TimeMomentsLoadClick(object sender, RoutedEventArgs e)
@@ -280,6 +302,7 @@ namespace SuperImposX
                 .Count() ?? 0;
 
             this.RedrawTrackCanvas();
+            this._heightProfile.Redraw(_trackPointsElapsedCount);
         }
 
         private void TimeMomentsAddClick(object sender, RoutedEventArgs e)
