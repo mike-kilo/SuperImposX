@@ -106,10 +106,12 @@ namespace SuperImposX
                 this.HeightProfileCanvas.Children.Add(this._heightProfileElapsed);
             }
 
+            var elapsedDistance = this._points.Take(elapsedPoints).Sum(p => p.Distance);
+            var totalDistance = this._points.Sum(p => p.Distance);
             this._heightProfileTotal.Clip = new RectangleGeometry()
             {
                 Rect = new Rect(
-                    new Point() { X = this.HeightProfileCanvas.ActualWidth * elapsedPoints / this._points.Count, Y = 0 },
+                    new Point() { X = this.HeightProfileCanvas.ActualWidth * elapsedDistance / totalDistance, Y = 0 },
                     new Point() { X = this.HeightProfileCanvas.ActualWidth, Y = this.HeightProfileCanvas.ActualHeight }),
             };
 
@@ -117,7 +119,7 @@ namespace SuperImposX
             {
                 Rect = new Rect(
                     new Point() { X = 0, Y = 0 },
-                    new Point() { X = this.HeightProfileCanvas.ActualWidth * elapsedPoints / this._points.Count, Y = this.HeightProfileCanvas.ActualHeight })
+                    new Point() { X = this.HeightProfileCanvas.ActualWidth * elapsedDistance / totalDistance, Y = this.HeightProfileCanvas.ActualHeight })
             };
         }
     }
