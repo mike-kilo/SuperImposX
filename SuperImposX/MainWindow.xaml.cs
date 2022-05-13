@@ -251,7 +251,6 @@ namespace SuperImposX
             this.RouteDateFinish = _trackPoints.Last().Timestamp;
             this.RouteTimeElapsed = this.RouteDateFinish.Subtract(this.RouteDateStart);
 
-            
             if (this._heightProfile != null)
                 this.PreviewCanvas.Children.Remove(this._heightProfile.HeightProfileCanvas);
             this._heightProfile = new HeightProfile(_trackPoints);
