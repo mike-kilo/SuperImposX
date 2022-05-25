@@ -144,6 +144,7 @@ namespace SuperImposX
             _instance = this;
             this.DataContext = this;
             this.TrackPointsTime.ItemsSource = _trackPointsTime;
+            this.TrackCanvasWidth = 400.0;
             this.IsHeightProfileVisible = true;
         }
 
