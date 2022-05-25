@@ -34,11 +34,11 @@ namespace SuperImposX
 
         public static readonly DependencyProperty TrackCanvasSizeProperty = DependencyProperty.Register("TrackCanvasSize", typeof(Size), typeof(MainWindow), new PropertyMetadata(new Size() { Width = 100.0, Height = 100.0 }));
 
-        public static readonly DependencyProperty TrackCanvasWidthProperty = DependencyProperty.Register("TrackCanvasWidth", typeof(double), typeof(MainWindow), new PropertyMetadata(100.0), TrackCanvasValidateCallback);
+        public static readonly DependencyProperty TrackCanvasWidthProperty = DependencyProperty.Register("TrackCanvasWidth", typeof(double), typeof(MainWindow), new FrameworkPropertyMetadata(100.0, FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(TrackCanvasPositionChanged)));
 
-        public static readonly DependencyProperty TrackCanvasOriginXProperty = DependencyProperty.Register("TrackCanvasOriginX", typeof(double), typeof(MainWindow), new PropertyMetadata(0.0), TrackCanvasValidateCallback);
+        public static readonly DependencyProperty TrackCanvasOriginXProperty = DependencyProperty.Register("TrackCanvasOriginX", typeof(double), typeof(MainWindow), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(TrackCanvasPositionChanged)));
 
-        public static readonly DependencyProperty TrackCanvasOriginYProperty = DependencyProperty.Register("TrackCanvasOriginY", typeof(double), typeof(MainWindow), new PropertyMetadata(0.0), TrackCanvasValidateCallback);
+        public static readonly DependencyProperty TrackCanvasOriginYProperty = DependencyProperty.Register("TrackCanvasOriginY", typeof(double), typeof(MainWindow), new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(TrackCanvasPositionChanged)));
 
         public static readonly DependencyProperty NewTimeSpanProperty = DependencyProperty.Register("NewTimeSpan", typeof(string), typeof(MainWindow), new PropertyMetadata(string.Empty));
 
@@ -229,16 +229,6 @@ namespace SuperImposX
 
         #endregion
 
-        #region Callbacks
-
-        public static bool TrackCanvasValidateCallback(object value)
-        {
-            _instance?.RedrawTrackCanvas();
-            return true;
-        }
-
-        #endregion
-
         #region Event handlers
 
         private void BrowseGPXClick(object sender, RoutedEventArgs e)
@@ -353,6 +343,11 @@ namespace SuperImposX
             //    this.RedrawTrackCanvas();
             //    this.TrackCanvas.SaveCanvasToPNG(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(this.CurrentFile) ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), $"{System.IO.Path.GetFileNameWithoutExtension(this.CurrentFile)}_{elapsed.ElapsedTime.ToString().Replace(':', '.')}_{elapsed.Filename}.png"));
             //}
+        }
+
+        public static void TrackCanvasPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            _instance?.RedrawTrackCanvas();
         }
 
         private static void IsHeightProfileVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
