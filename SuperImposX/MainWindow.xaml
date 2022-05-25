@@ -42,6 +42,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <TextBlock Text="Width:" Grid.Column="0" Grid.Row="0" />
                 <Slider Grid.Column="1" Grid.Row="0" 
@@ -79,7 +80,7 @@
                     </Slider.ToolTip>
                 </Slider>
                 <Border Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="2" BorderThickness="1" BorderBrush="Black" Width="640" Height="360" >
-                    <Canvas x:Name="PreviewCanvas" x:FieldModifier="private" Width="1280" Height="720" ClipToBounds="True" >
+                    <Canvas x:Name="PreviewCanvas" x:FieldModifier="private" Width="1280" Height="720" ClipToBounds="True" Background="Transparent" >
                         <Canvas.LayoutTransform>
                             <ScaleTransform ScaleX="0.5" ScaleY="0.5" />
                         </Canvas.LayoutTransform>
@@ -90,6 +91,7 @@
                         </Canvas.Children>
                     </Canvas>
                 </Border>
+                <CheckBox Grid.Row="3" Grid.Column="0" Content="Display height profile" IsChecked="{Binding IsHeightProfileVisible}" />
             </Grid>
         </GroupBox>
         <GroupBox Grid.Column="1" Grid.Row="1" Header="Moments" Margin="3" >
