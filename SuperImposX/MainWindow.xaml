@@ -42,6 +42,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <TextBlock Text="Width:" Grid.Column="0" Grid.Row="0" />
                 <Slider Grid.Column="1" Grid.Row="0" 
@@ -90,6 +91,7 @@
                         </Canvas.Children>
                     </Canvas>
                 </Border>
+                <CheckBox Grid.Row="3" Grid.Column="0" Content="Display height profile" IsChecked="{Binding IsHeightProfileVisible}" />
             </Grid>
         </GroupBox>
         <GroupBox Grid.Column="1" Grid.Row="1" Header="Moments" Margin="3" >

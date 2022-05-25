@@ -50,6 +50,8 @@ namespace SuperImposX
 
         public static readonly DependencyProperty RouteTimeElapsedProperty = DependencyProperty.Register("RouteTimeElapsed", typeof(TimeSpan), typeof(MainWindow), new PropertyMetadata(new TimeSpan(0)));
 
+        public static readonly DependencyProperty IsHeightProfileVisibleProperty = DependencyProperty.Register("IsHeightProfileVisible", typeof(bool), typeof(MainWindow), new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(IsHeightProfileVisibleChanged)));
+
         #endregion
 
         #region Properties
@@ -114,6 +116,12 @@ namespace SuperImposX
             set { SetValue(RouteTimeElapsedProperty, value); }
         }
 
+        public bool IsHeightProfileVisible
+        {
+            get { return (bool)GetValue(IsHeightProfileVisibleProperty); }
+            set { SetValue(IsHeightProfileVisibleProperty, value); }
+        }
+
         #endregion
 
         #region Private members
@@ -136,6 +144,7 @@ namespace SuperImposX
             _instance = this;
             this.DataContext = this;
             this.TrackPointsTime.ItemsSource = _trackPointsTime;
+            this.IsHeightProfileVisible = true;
         }
 
         #endregion
@@ -344,6 +353,11 @@ namespace SuperImposX
             //    this.RedrawTrackCanvas();
             //    this.TrackCanvas.SaveCanvasToPNG(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(this.CurrentFile) ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), $"{System.IO.Path.GetFileNameWithoutExtension(this.CurrentFile)}_{elapsed.ElapsedTime.ToString().Replace(':', '.')}_{elapsed.Filename}.png"));
             //}
+        }
+
+        private static void IsHeightProfileVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            MainWindow._instance._heightProfile.HeightProfileCanvas.Visibility = (bool)e.NewValue ? Visibility.Visible : Visibility.Collapsed;
         }
 
         #endregion
