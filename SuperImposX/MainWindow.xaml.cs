@@ -311,6 +311,7 @@ namespace SuperImposX
         private void TrackPointsTimeSelected(object sender, SelectionChangedEventArgs e)
         {
             if ((sender as ListView)?.SelectedIndex < 0) return;
+            if (this._heightProfile == null) return;
 
             _trackPointsElapsedCount = _trackPoints?
                 .TakeWhile(p => p.Timestamp.Subtract(_trackPoints.First().Timestamp) <= _trackPointsTime[(sender as ListView)?.SelectedIndex ?? 0].ElapsedTime)
