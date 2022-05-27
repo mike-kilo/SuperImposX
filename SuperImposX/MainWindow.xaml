@@ -131,16 +131,45 @@
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-                <StackPanel Grid.ColumnSpan="3" Grid.Row="2" Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <TextBox Text="{Binding NewTimeSpan, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextChanged="NewTimeSpanChanged" Width="80" VerticalContentAlignment="Center" />
-                        <Button Content="Add timespan" Width="80" Margin="3" Click="TimeMomentsAddClick" IsEnabled="{Binding NewTimeSpanIsValid}" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button Content="Load..." Width="60" Margin="3" Click="TimeMomentsLoadClick" />
-                        <Button Content="Remove selected" Width="100" Margin="3" Click="TimeMomentsClearClick" />
-                    </StackPanel>
-                </StackPanel>
+                <Grid Grid.ColumnSpan="3" Grid.Row="2" Margin="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="5" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <RadioButton x:Name="AddSingleRadio" x:FieldModifier="private" Content="Add single" IsChecked="True" GroupName="TimeMomentsType" Margin="3" />
+                    <RadioButton x:Name="AddSeriesRadio" x:FieldModifier="private" 
+                                 Grid.Row="1" 
+                                 Content="Add series" GroupName="TimeMomentsType" 
+                                 Margin="3" 
+                                 IsEnabled="{Binding ElementName=TrackPointsTime, Path=SelectedItems.Count}" 
+                                 ToolTip="Select starting time moment from the list to add a series"
+                                 ToolTipService.ShowOnDisabled="True" />
+                    <TextBlock Grid.Column="1" Text="Moment" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="3" />
+                    <TextBox Grid.Column="2" 
+                             Text="{Binding NewTimeSpan, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                             TextChanged="NewTimeSpanChanged" 
+                             Width="60" 
+                             VerticalContentAlignment="Center" />
+                    <TextBlock Grid.Column="1" Grid.Row="1" Text="Repeat" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="3" />
+                    <TextBox Grid.Column="2" Grid.Row="1" 
+                             Text="{Binding NewTimeSpanSeries, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                             TextChanged="NewTimeSpanSeriesChanged" 
+                             Width="60" 
+                             VerticalContentAlignment="Center" 
+                             IsEnabled="{Binding ElementName=AddSeriesRadio, Path=IsChecked}" />
+                    <Button Grid.ColumnSpan="3" Grid.Row="2" Content="Add" Width="160" Margin="3" Click="TimeMomentsAddClick" IsEnabled="{Binding NewTimeSpanIsValid}" />
+                    <Button Grid.ColumnSpan="3" Grid.Row="4" Content="Load from media..." Width="160" Margin="3" Click="TimeMomentsLoadClick" />
+                    <Button Grid.ColumnSpan="3" Grid.Row="5" Content="Remove selected" Width="160" Margin="3" Click="TimeMomentsClearClick" />
+                </Grid>
             </Grid>
         </GroupBox>
         <Button Grid.Column="1" Grid.Row="2" Content="Generate superimpose image" Click="GenerateSuperimposeImagesClick" Margin="3" />

@@ -44,6 +44,10 @@ namespace SuperImposX
 
         public static readonly DependencyProperty NewTimeSpanIsValidProperty = DependencyProperty.Register("NewTimeSpanIsValid", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
 
+        public static readonly DependencyProperty NewTimeSpanSeriesProperty = DependencyProperty.Register("NewTimeSpanSeries", typeof(string), typeof(MainWindow), new PropertyMetadata(string.Empty));
+        
+        public static readonly DependencyProperty NewTimeSpanSeriesIsValidProperty = DependencyProperty.Register("NewTimeSpanSeriesIsValid", typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+
         public static readonly DependencyProperty RouteDateStartProperty = DependencyProperty.Register("RouteDateStart", typeof(DateTime), typeof(MainWindow), new PropertyMetadata(DateTime.MinValue));
 
         public static readonly DependencyProperty RouteDateFinishProperty = DependencyProperty.Register("RouteDateFinish", typeof(DateTime), typeof(MainWindow), new PropertyMetadata(DateTime.MaxValue));
@@ -96,6 +100,18 @@ namespace SuperImposX
         {
             get { return (bool)GetValue(NewTimeSpanIsValidProperty); }
             set { SetValue(NewTimeSpanIsValidProperty, value); }
+        }
+
+        public string NewTimeSpanSeries
+        {
+            get { return (string)GetValue(NewTimeSpanSeriesProperty); }
+            set { SetValue(NewTimeSpanSeriesProperty, value); }
+        }
+
+        public bool  NewTimeSpanSeriesIsValid
+        {
+            get { return (bool )GetValue(NewTimeSpanSeriesIsValidProperty); }
+            set { SetValue(NewTimeSpanSeriesIsValidProperty, value); }
         }
 
         public DateTime RouteDateStart
@@ -306,12 +322,38 @@ namespace SuperImposX
 
         private void TimeMomentsAddClick(object sender, RoutedEventArgs e)
         {
-            var newTimeSpan = new TimeSpan(0);
-            if (TimeSpan.TryParse(this.NewTimeSpan, out newTimeSpan))
+            if (this.AddSingleRadio.IsChecked == true)
             {
-                _trackPointsTime.Add(new Helpers.ElapsedPoint() { ElapsedTime = newTimeSpan, Filename = newTimeSpan.ToString().Replace(':','.'), FileTime = new DateTime(newTimeSpan.Ticks) });
-                _trackPointsTime.Sort();
-                this.NewTimeSpan = String.Empty;
+                var newTimeSpan = new TimeSpan(0);
+                if (TimeSpan.TryParse(this.NewTimeSpan, out newTimeSpan))
+                {
+                    _trackPointsTime.Add(new Helpers.ElapsedPoint() { ElapsedTime = newTimeSpan, Filename = newTimeSpan.ToString().Replace(':', '.'), FileTime = new DateTime(newTimeSpan.Ticks) });
+                    _trackPointsTime.Sort();
+                    this.NewTimeSpan = String.Empty;
+                }
+            }
+
+            if (this.AddSeriesRadio.IsChecked == true)
+            {
+                var spacing = new TimeSpan(0);
+                var repeat = 0;
+                if (TimeSpan.TryParse(this.NewTimeSpan, out spacing) && int.TryParse(this.NewTimeSpanSeries, out repeat) && repeat > 1)
+                {
+                    var start = _trackPointsTime[this.TrackPointsTime.SelectedIndex].ElapsedTime;
+                    for (int i = 0; i < repeat; i++)
+                    {
+                        var newPoint = start.Add(spacing * (i + 1));
+                        _trackPointsTime.Add(new Helpers.ElapsedPoint()
+                        {
+                            ElapsedTime = newPoint,
+                            Filename = newPoint.ToString().Replace(':', '.'),
+                            FileTime = new DateTime(newPoint.Ticks)
+                        });
+                    }
+                    _trackPointsTime.Sort();
+                    this.NewTimeSpan = String.Empty;
+                    this.NewTimeSpanSeries = String.Empty;
+                }
             }
         }
 
@@ -326,6 +368,11 @@ namespace SuperImposX
         private void NewTimeSpanChanged(object sender, TextChangedEventArgs e)
         {
             this.NewTimeSpanIsValid = TimeSpan.TryParse((sender as TextBox)?.Text, out _);
+        }
+
+        private void NewTimeSpanSeriesChanged(object sender, TextChangedEventArgs e)
+        {
+            this.NewTimeSpanSeriesIsValid = int.TryParse((sender as TextBox)?.Text, out _) && this.NewTimeSpanIsValid;
         }
 
         private void GenerateSuperimposeImagesClick(object sender, RoutedEventArgs e)
