@@ -203,10 +203,18 @@
                         </Button.Style>
                     </Button>
                     <Button Grid.ColumnSpan="3" Grid.Row="4" Content="Load from media..." Width="160" Margin="3" Click="TimeMomentsLoadClick" />
-                    <Button Grid.ColumnSpan="3" Grid.Row="5" Content="Remove selected" Width="160" Margin="3" Click="TimeMomentsClearClick" />
+                    <Button Grid.ColumnSpan="3" Grid.Row="5" 
+                            Content="Remove selected" 
+                            Width="160" Margin="3" 
+                            Click="TimeMomentsClearClick" 
+                            IsEnabled="{Binding ElementName=TrackPointsTime, Path=SelectedItems.Count}" />
                 </Grid>
             </Grid>
         </GroupBox>
-        <Button Grid.Column="1" Grid.Row="2" Content="Generate superimpose image" Click="GenerateSuperimposeImagesClick" Margin="3" />
+        <Button Grid.Column="1" Grid.Row="2" 
+                Content="Generate superimpose image" 
+                Click="GenerateSuperimposeImagesClick" 
+                Margin="3" 
+                IsEnabled="{Binding ElementName=TrackPointsTime, Path=SelectedItems.Count}" />
     </Grid>
 </Window>
