@@ -145,10 +145,10 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <RadioButton x:Name="AddSingleRadio" x:FieldModifier="private" Content="Add single" IsChecked="True" GroupName="TimeMomentsType" Margin="3" />
+                    <RadioButton x:Name="AddSingleRadio" x:FieldModifier="private" Content="Single" IsChecked="True" GroupName="TimeMomentsType" Margin="3" />
                     <RadioButton x:Name="AddSeriesRadio" x:FieldModifier="private" 
                                  Grid.Row="1" 
-                                 Content="Add series" GroupName="TimeMomentsType" 
+                                 Content="Series" GroupName="TimeMomentsType" 
                                  Margin="3" 
                                  IsEnabled="{Binding ElementName=TrackPointsTime, Path=SelectedItems.Count}" 
                                  ToolTip="Select starting time moment from the list to add a series"
