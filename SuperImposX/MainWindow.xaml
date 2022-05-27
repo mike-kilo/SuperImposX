@@ -10,6 +10,9 @@
         ResizeMode="NoResize"
         Width="900" Height="550"
         d:DesignWidth="900" d:DesignHeight="550">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
     <Grid Margin="3">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -153,7 +156,16 @@
                                  IsEnabled="{Binding ElementName=TrackPointsTime, Path=SelectedItems.Count}" 
                                  ToolTip="Select starting time moment from the list to add a series"
                                  ToolTipService.ShowOnDisabled="True" />
-                    <TextBlock Grid.Column="1" Text="Moment" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="3" />
+                    <TextBlock Grid.Column="1" 
+                               Text="Moment" 
+                               HorizontalAlignment="Right" VerticalAlignment="Center" 
+                               Margin="3" 
+                               Visibility="{Binding ElementName=AddSingleRadio, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <TextBlock Grid.Column="1" 
+                               Text="Timespan" 
+                               HorizontalAlignment="Right" VerticalAlignment="Center" 
+                               Margin="3" 
+                               Visibility="{Binding ElementName=AddSeriesRadio, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     <TextBox Grid.Column="2" 
                              Text="{Binding NewTimeSpan, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                              TextChanged="NewTimeSpanChanged" 
