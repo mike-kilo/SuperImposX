@@ -225,8 +225,13 @@ namespace SuperImposX
         {
             if (_trackPoints == null) return;
 
+            // Near the equator width and height are kind of square. The more we get to the poles, the more the meridians get closer (down to zero at the poles).
+            // If we want to plot the track "square", we need to apply the correction based on which latitude we are on.
+            var averageLatitude =_trackPoints.Select(p => p.Latitude).Average();
+            var correctionFactor = 1 / Math.Cos(averageLatitude * Math.PI / 180.0);
             var bounds = _trackPoints.GetBounds();
-            var aspect = (bounds.Max.Latitude - bounds.Min.Latitude) / (bounds.Max.Longitude - bounds.Min.Longitude);
+            var aspect = Math.Abs((bounds.Max.Latitude - bounds.Min.Latitude) / (bounds.Max.Longitude - bounds.Min.Longitude) * correctionFactor);
+
             SetCanvasSize(this.TrackCanvas, new Size() { Width = this.TrackCanvasWidth, Height = this.TrackCanvasWidth * aspect });
             SetCanvasOrigin(this.TrackCanvas, new Point() { X = this.TrackCanvasOriginX, Y = this.TrackCanvasOriginY });
             DrawGPXOnCanvas(_trackPoints, this.TrackCanvas, _trackPointsElapsedCount);
