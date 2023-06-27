@@ -84,9 +84,9 @@
                     </Slider.ToolTip>
                 </Slider>
                 <Border Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="2" BorderThickness="1" BorderBrush="Black" Width="640" Height="360" >
-                    <Canvas x:Name="PreviewCanvas" x:FieldModifier="private" Width="1280" Height="720" ClipToBounds="True" Background="Transparent" >
+                    <Canvas x:Name="PreviewCanvas" x:FieldModifier="private" Width="{Binding Path=DrawingCanvasSize.Width, Mode=OneWay}" Height="{Binding Path=DrawingCanvasSize.Height, Mode=OneWay}" ClipToBounds="True" Background="Transparent" >
                         <Canvas.LayoutTransform>
-                            <ScaleTransform ScaleX="0.5" ScaleY="0.5" />
+                            <ScaleTransform ScaleX="{Binding Path=DrawingCanvasScale.Width, Mode=OneWay}" ScaleY="{Binding Path=DrawingCanvasScale.Height, Mode=OneWay}" />
                         </Canvas.LayoutTransform>
                         <Canvas.Children>
                             <Canvas x:Name="TrackCanvas" x:FieldModifier="private" 

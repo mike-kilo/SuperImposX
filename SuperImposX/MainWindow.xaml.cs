@@ -47,6 +47,9 @@ namespace SuperImposX
 
         public static readonly DependencyProperty IsHeightProfileVisibleProperty = DependencyProperty.Register("IsHeightProfileVisible", typeof(bool), typeof(MainWindow), new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(IsHeightProfileVisibleChanged)));
 
+        public static readonly DependencyProperty DrawingCanvasSizeProperty = DependencyProperty.Register("DrawingCanvasSize", typeof(Size), typeof(MainWindow), new PropertyMetadata(new Size() { Width = 1280, Height = 720 }));
+        public static readonly DependencyProperty DrawingCanvasScaleProperty = DependencyProperty.Register("DrawingCanvasScale", typeof(Size), typeof(MainWindow), new PropertyMetadata(new Size() { Width = 0.5, Height = 0.5 }));
+
         #endregion
 
         #region Properties
@@ -127,6 +130,18 @@ namespace SuperImposX
         {
             get { return (bool)GetValue(IsHeightProfileVisibleProperty); }
             set { SetValue(IsHeightProfileVisibleProperty, value); }
+        }
+
+        public Size DrawingCanvasSize
+        {
+            get { return (Size)GetValue(DrawingCanvasSizeProperty); }
+            set { SetValue(DrawingCanvasSizeProperty, value); }
+        }
+
+        public Size DrawingCanvasScale
+        {
+            get { return (Size)GetValue(DrawingCanvasScaleProperty); }
+            set { SetValue(DrawingCanvasScaleProperty, value); }
         }
 
         #endregion
