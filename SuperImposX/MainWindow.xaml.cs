@@ -415,6 +415,22 @@ namespace SuperImposX
             MainWindow._instance._heightProfile.HeightProfileCanvas.Visibility = (bool)e.NewValue ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            switch ((sender as ComboBox)?.SelectedIndex)
+            {
+                case 0:
+                default:
+                    this.DrawingCanvasSize = new Size() { Width = 1280, Height = 720 };
+                    this.DrawingCanvasScale = new Size() { Width = 0.5, Height = 0.5 };
+                    break;
+                case 1:
+                    this.DrawingCanvasSize = new Size() { Width = 1920, Height = 1080 };
+                    this.DrawingCanvasScale = new Size() { Width = 1.0 / 3.0, Height = 1.0/3.0 };
+                    break;
+            }
+        }
+
         #endregion
     }
 }

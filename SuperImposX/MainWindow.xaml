@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="SuperImposX" 
         ResizeMode="NoResize"
-        Width="900" Height="550"
+        Width="900" Height="560"
         d:DesignWidth="900" d:DesignHeight="550">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -41,6 +41,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -83,7 +84,12 @@
                                  ContentStringFormat=" {0:0}" />
                     </Slider.ToolTip>
                 </Slider>
-                <Border Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="2" BorderThickness="1" BorderBrush="Black" Width="640" Height="360" >
+                <TextBlock Grid.Column="6" Grid.Row="0" Text="Output size:" />
+                <ComboBox Grid.Column="6" Grid.Row="1" SelectionChanged="ComboBox_SelectionChanged" >
+                    <ComboBoxItem Content="1280x720" />
+                    <ComboBoxItem Content="1920x1080" IsSelected="True" />
+                </ComboBox>
+                <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="2" BorderThickness="1" BorderBrush="Black" Width="640" Height="360" >
                     <Canvas x:Name="PreviewCanvas" x:FieldModifier="private" Width="{Binding Path=DrawingCanvasSize.Width, Mode=OneWay}" Height="{Binding Path=DrawingCanvasSize.Height, Mode=OneWay}" ClipToBounds="True" Background="Transparent" >
                         <Canvas.LayoutTransform>
                             <ScaleTransform ScaleX="{Binding Path=DrawingCanvasScale.Width, Mode=OneWay}" ScaleY="{Binding Path=DrawingCanvasScale.Height, Mode=OneWay}" />
