@@ -174,18 +174,18 @@ namespace SuperImposX
 
         #region Static methods
 
-        private static void DrawGPXOnCanvas(IEnumerable<GPXProcessing.TrackPoint> points, Canvas canvas, int elapsedCount = 0)
+        private static void DrawGPXOnCanvas(IEnumerable<GPXProcessing.TrackPoint> points, Canvas canvas, int elapsedCount = 0, double thicknessFactor = 2.0)
         {
             var trackBounds = points.GetBounds();
             var canvasSize = new Size() { Width = canvas.ActualWidth, Height = canvas.ActualHeight };
             var margin = 10;
 
             var line = points.CreatePolyline(canvasSize, trackBounds, margin);
-            line.StrokeThickness = 2;
+            line.StrokeThickness = 1.0 * thicknessFactor;
             line.Stroke = Brushes.White;
             var bgLine = points.CreatePolyline(canvasSize, trackBounds, margin);
             bgLine.Stroke = Brushes.Black;
-            bgLine.StrokeThickness = 4;
+            bgLine.StrokeThickness = 2.0 * thicknessFactor;
             bgLine.Opacity = 0.618;
 
             canvas.Children.Clear();
@@ -195,14 +195,14 @@ namespace SuperImposX
             if (elapsedCount > 0)
             {
                 var elapsedLine = points.Take(elapsedCount).CreatePolyline(canvasSize, trackBounds, margin);
-                elapsedLine.StrokeThickness = 5;
+                elapsedLine.StrokeThickness = 2.5 * thicknessFactor;
                 elapsedLine.Stroke = Brushes.White;
                 var elapsedBgLine = points.Take(elapsedCount).CreatePolyline(canvasSize, trackBounds, margin);
                 elapsedBgLine.Stroke = Brushes.Black;
-                elapsedBgLine.StrokeThickness = 7;
+                elapsedBgLine.StrokeThickness = 3.5 * thicknessFactor;
                 elapsedBgLine.Opacity = 0.618;
 
-                var currentPosition = points.Skip(elapsedCount - 1).First().CreateEllipse(canvasSize, trackBounds, margin);
+                var currentPosition = points.Skip(elapsedCount - 1).First().CreateEllipse(canvasSize, trackBounds, margin, thicknessFactor);
 
                 canvas.Children.Add(elapsedBgLine);
                 canvas.Children.Add(elapsedLine);
@@ -240,7 +240,7 @@ namespace SuperImposX
 
             SetCanvasSize(this.TrackCanvas, new Size() { Width = this.TrackCanvasWidth, Height = this.TrackCanvasWidth * aspect });
             SetCanvasOrigin(this.TrackCanvas, new Point() { X = this.TrackCanvasOriginX, Y = this.TrackCanvasOriginY });
-            DrawGPXOnCanvas(_trackPoints, this.TrackCanvas, _trackPointsElapsedCount);
+            DrawGPXOnCanvas(_trackPoints, this.TrackCanvas, _trackPointsElapsedCount, 1.0 / this.DrawingCanvasScale.Width);
         }
 
         private void RedrawHeightProfile()
