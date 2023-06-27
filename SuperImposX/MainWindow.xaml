@@ -85,7 +85,7 @@
                     </Slider.ToolTip>
                 </Slider>
                 <TextBlock Grid.Column="6" Grid.Row="0" Text="Output size:" />
-                <ComboBox Grid.Column="6" Grid.Row="1" SelectionChanged="ComboBox_SelectionChanged" >
+                <ComboBox Grid.Column="6" Grid.Row="1" SelectionChanged="ComboBox_SelectionChanged" Loaded="ComboBox_Loaded" >
                     <ComboBoxItem Content="1280x720" />
                     <ComboBoxItem Content="1920x1080" IsSelected="True" />
                 </ComboBox>
