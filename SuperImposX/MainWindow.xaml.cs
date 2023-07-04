@@ -252,7 +252,7 @@ namespace SuperImposX
             Canvas.SetTop(_heightProfile.HeightProfileCanvas, 610);
             _heightProfile.HeightProfileCanvas.UpdateLayout();
 
-            _heightProfile.Redraw();
+            _heightProfile.ElapsedPointsCount = _trackPointsElapsedCount;
         }
 
         #endregion
@@ -329,7 +329,7 @@ namespace SuperImposX
                 .Count() ?? 0;
 
             this.RedrawTrackCanvas();
-            this._heightProfile.Redraw(_trackPointsElapsedCount);
+            this._heightProfile.ElapsedPointsCount = _trackPointsElapsedCount;
         }
 
         private void TimeMomentsAddClick(object sender, RoutedEventArgs e)

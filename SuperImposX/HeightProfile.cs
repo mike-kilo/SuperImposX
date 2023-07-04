@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -48,6 +48,22 @@ namespace SuperImposX
 
         private Polygon _heightProfileElapsed { get; set; }
 
+        private int _elapsedPointsCount;
+
+        public int ElapsedPointsCount 
+        {
+            get
+            {
+                return this._elapsedPointsCount;
+            }
+
+            set
+            {
+                this._elapsedPointsCount = value;
+                this.Redraw();
+            }
+        }
+
         private static List<ElevationPoint> ConvertToElevationPoints(IEnumerable<TrackPoint> points)
         {
             return points
@@ -61,7 +77,27 @@ namespace SuperImposX
             this.HeightProfileCanvas = new Canvas();
             this.HeightProfileCanvas.ClipToBounds = true;
             this.HeightProfileCanvas.Background = new SolidColorBrush(Colors.LightGray) { Opacity = 0.309 };
+            this.ElapsedPointsCount = 0;
+            this.HeightProfileCanvas.SizeChanged += HeightProfileCanvas_SizeChanged;
             this._points = ConvertToElevationPoints(points);
+        }
+
+        ~HeightProfile()
+        {
+            this.HeightProfileCanvas.SizeChanged -= HeightProfileCanvas_SizeChanged;
+        }
+
+        private void HeightProfileCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (_points is null) return;
+            this.HeightProfileCanvas.Children.RemoveRange(0, this.HeightProfileCanvas.Children.Count);
+
+            this._heightProfileTotal = this.GenerateHeightPolygon(new SolidColorBrush(Colors.LightGray) { Opacity = 0.309 });
+            this.HeightProfileCanvas.Children.Add(this._heightProfileTotal);
+            this._heightProfileElapsed = this.GenerateHeightPolygon(new SolidColorBrush(Colors.White) { Opacity = 0.618 });
+            this.HeightProfileCanvas.Children.Add(this._heightProfileElapsed);
+
+            this.Redraw();
         }
 
         private Polygon GenerateHeightPolygon(Brush brush)
@@ -92,21 +128,11 @@ namespace SuperImposX
             };
         }
 
-        public void Redraw(int elapsedPoints = 0)
+        private void Redraw()
         {
-            if (this._heightProfileTotal == null)
-            {
-                this._heightProfileTotal = this.GenerateHeightPolygon(new SolidColorBrush(Colors.LightGray) { Opacity = 0.309 });
-                this.HeightProfileCanvas.Children.Add(this._heightProfileTotal);
-            }
+            if (this._points is null) return;
 
-            if (this._heightProfileElapsed == null)
-            {
-                this._heightProfileElapsed = this.GenerateHeightPolygon(new SolidColorBrush(Colors.White) { Opacity = 0.618 });
-                this.HeightProfileCanvas.Children.Add(this._heightProfileElapsed);
-            }
-
-            var elapsedDistance = this._points.Take(elapsedPoints).Sum(p => p.Distance);
+            var elapsedDistance = this._points.Take(this.ElapsedPointsCount).Sum(p => p.Distance);
             var totalDistance = this._points.Sum(p => p.Distance);
             this._heightProfileTotal.Clip = new RectangleGeometry()
             {
