@@ -412,7 +412,8 @@ namespace SuperImposX
 
         private static void IsHeightProfileVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            MainWindow._instance._heightProfile.HeightProfileCanvas.Visibility = (bool)e.NewValue ? Visibility.Visible : Visibility.Collapsed;
+            if (MainWindow._instance?._heightProfile is not null)
+                MainWindow._instance._heightProfile.HeightProfileCanvas.Visibility = (bool)e.NewValue ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
