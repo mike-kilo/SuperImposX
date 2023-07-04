@@ -154,7 +154,7 @@ namespace SuperImposX
 
         private static ObservableCollection<Helpers.ElapsedPoint> _trackPointsTime = new ObservableCollection<Helpers.ElapsedPoint>();
 
-        private HeightProfile _heightProfile = null;
+        private HeightProfile? _heightProfile = null;
 
         #endregion
 
