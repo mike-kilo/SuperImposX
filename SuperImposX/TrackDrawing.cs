@@ -38,7 +38,7 @@ namespace SuperImposX
             return line;
         }
 
-        public static Ellipse CreateEllipse(this TrackPoint point, Size canvasSize, Helpers.Bounds<TrackPoint> trackBounds, int margin = 0)
+        public static Ellipse CreateEllipse(this TrackPoint point, Size canvasSize, Helpers.Bounds<TrackPoint> trackBounds, int margin = 0, double scaleFactor = 2.0)
         {
             var scale = new Size()
             {
@@ -48,8 +48,8 @@ namespace SuperImposX
 
             var ellipse = new Ellipse()
             {
-                Width = 10,
-                Height = 10,
+                Width = 5.0 * scaleFactor,
+                Height = 5.0 * scaleFactor,
                 Fill = Brushes.White,
                 Stroke = Brushes.Black,
                 StrokeThickness = 1,

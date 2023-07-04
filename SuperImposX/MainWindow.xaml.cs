@@ -2,18 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Xml.Linq;
 
 namespace SuperImposX
 {
@@ -55,6 +46,9 @@ namespace SuperImposX
         public static readonly DependencyProperty RouteTimeElapsedProperty = DependencyProperty.Register("RouteTimeElapsed", typeof(TimeSpan), typeof(MainWindow), new PropertyMetadata(new TimeSpan(0)));
 
         public static readonly DependencyProperty IsHeightProfileVisibleProperty = DependencyProperty.Register("IsHeightProfileVisible", typeof(bool), typeof(MainWindow), new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsRender, new PropertyChangedCallback(IsHeightProfileVisibleChanged)));
+
+        public static readonly DependencyProperty DrawingCanvasSizeProperty = DependencyProperty.Register("DrawingCanvasSize", typeof(Size), typeof(MainWindow), new PropertyMetadata(new Size() { Width = 1280, Height = 720 }));
+        public static readonly DependencyProperty DrawingCanvasScaleProperty = DependencyProperty.Register("DrawingCanvasScale", typeof(Size), typeof(MainWindow), new PropertyMetadata(new Size() { Width = 0.5, Height = 0.5 }));
 
         #endregion
 
@@ -138,6 +132,18 @@ namespace SuperImposX
             set { SetValue(IsHeightProfileVisibleProperty, value); }
         }
 
+        public Size DrawingCanvasSize
+        {
+            get { return (Size)GetValue(DrawingCanvasSizeProperty); }
+            set { SetValue(DrawingCanvasSizeProperty, value); }
+        }
+
+        public Size DrawingCanvasScale
+        {
+            get { return (Size)GetValue(DrawingCanvasScaleProperty); }
+            set { SetValue(DrawingCanvasScaleProperty, value); }
+        }
+
         #endregion
 
         #region Private members
@@ -148,7 +154,7 @@ namespace SuperImposX
 
         private static ObservableCollection<Helpers.ElapsedPoint> _trackPointsTime = new ObservableCollection<Helpers.ElapsedPoint>();
 
-        private HeightProfile _heightProfile = null;
+        private HeightProfile? _heightProfile = null;
 
         #endregion
 
@@ -168,18 +174,18 @@ namespace SuperImposX
 
         #region Static methods
 
-        private static void DrawGPXOnCanvas(IEnumerable<GPXProcessing.TrackPoint> points, Canvas canvas, int elapsedCount = 0)
+        private static void DrawGPXOnCanvas(IEnumerable<GPXProcessing.TrackPoint> points, Canvas canvas, int elapsedCount = 0, double thicknessFactor = 2.0)
         {
             var trackBounds = points.GetBounds();
             var canvasSize = new Size() { Width = canvas.ActualWidth, Height = canvas.ActualHeight };
             var margin = 10;
 
             var line = points.CreatePolyline(canvasSize, trackBounds, margin);
-            line.StrokeThickness = 2;
+            line.StrokeThickness = 1.0 * thicknessFactor;
             line.Stroke = Brushes.White;
             var bgLine = points.CreatePolyline(canvasSize, trackBounds, margin);
             bgLine.Stroke = Brushes.Black;
-            bgLine.StrokeThickness = 4;
+            bgLine.StrokeThickness = 2.0 * thicknessFactor;
             bgLine.Opacity = 0.618;
 
             canvas.Children.Clear();
@@ -189,14 +195,14 @@ namespace SuperImposX
             if (elapsedCount > 0)
             {
                 var elapsedLine = points.Take(elapsedCount).CreatePolyline(canvasSize, trackBounds, margin);
-                elapsedLine.StrokeThickness = 5;
+                elapsedLine.StrokeThickness = 2.5 * thicknessFactor;
                 elapsedLine.Stroke = Brushes.White;
                 var elapsedBgLine = points.Take(elapsedCount).CreatePolyline(canvasSize, trackBounds, margin);
                 elapsedBgLine.Stroke = Brushes.Black;
-                elapsedBgLine.StrokeThickness = 7;
+                elapsedBgLine.StrokeThickness = 3.5 * thicknessFactor;
                 elapsedBgLine.Opacity = 0.618;
 
-                var currentPosition = points.Skip(elapsedCount - 1).First().CreateEllipse(canvasSize, trackBounds, margin);
+                var currentPosition = points.Skip(elapsedCount - 1).First().CreateEllipse(canvasSize, trackBounds, margin, thicknessFactor);
 
                 canvas.Children.Add(elapsedBgLine);
                 canvas.Children.Add(elapsedLine);
@@ -225,23 +231,29 @@ namespace SuperImposX
         {
             if (_trackPoints == null) return;
 
+            // Near the equator width and height are kind of square. The more we get to the poles, the more the meridians get closer (down to zero at the poles).
+            // If we want to plot the track "square", we need to apply the correction based on which latitude we are on.
+            var averageLatitude =_trackPoints.Select(p => p.Latitude).Average();
+            var correctionFactor = 1 / Math.Cos(averageLatitude * Math.PI / 180.0);
             var bounds = _trackPoints.GetBounds();
-            var aspect = (bounds.Max.Latitude - bounds.Min.Latitude) / (bounds.Max.Longitude - bounds.Min.Longitude);
+            var aspect = Math.Abs((bounds.Max.Latitude - bounds.Min.Latitude) / (bounds.Max.Longitude - bounds.Min.Longitude) * correctionFactor);
+
             SetCanvasSize(this.TrackCanvas, new Size() { Width = this.TrackCanvasWidth, Height = this.TrackCanvasWidth * aspect });
             SetCanvasOrigin(this.TrackCanvas, new Point() { X = this.TrackCanvasOriginX, Y = this.TrackCanvasOriginY });
-            DrawGPXOnCanvas(_trackPoints, this.TrackCanvas, _trackPointsElapsedCount);
+            DrawGPXOnCanvas(_trackPoints, this.TrackCanvas, _trackPointsElapsedCount, 1.0 / this.DrawingCanvasScale.Width);
         }
 
         private void RedrawHeightProfile()
         {
             if (_heightProfile == null) return;
-            _heightProfile.HeightProfileCanvas.Width = 640;
-            _heightProfile.HeightProfileCanvas.Height = 100;
-            Canvas.SetLeft(_heightProfile.HeightProfileCanvas, 320);
-            Canvas.SetTop(_heightProfile.HeightProfileCanvas, 610);
+            _heightProfile.HeightProfileCanvas.Width = this.PreviewCanvas.ActualWidth / 2.0;
+            _heightProfile.HeightProfileCanvas.Height = this.PreviewCanvas.ActualHeight / 7.2;
+            _heightProfile.HeightProfileCanvas.UpdateLayout();
+            Canvas.SetLeft(_heightProfile.HeightProfileCanvas, (this.PreviewCanvas.ActualWidth - _heightProfile.HeightProfileCanvas.ActualWidth) / 2.0);
+            Canvas.SetTop(_heightProfile.HeightProfileCanvas, this.PreviewCanvas.ActualHeight * 0.8);
             _heightProfile.HeightProfileCanvas.UpdateLayout();
 
-            _heightProfile.Redraw();
+            _heightProfile.ElapsedPointsCount = _trackPointsElapsedCount;
         }
 
         #endregion
@@ -318,7 +330,7 @@ namespace SuperImposX
                 .Count() ?? 0;
 
             this.RedrawTrackCanvas();
-            this._heightProfile.Redraw(_trackPointsElapsedCount);
+            this._heightProfile.ElapsedPointsCount = _trackPointsElapsedCount;
         }
 
         private void TimeMomentsAddClick(object sender, RoutedEventArgs e)
@@ -378,20 +390,25 @@ namespace SuperImposX
 
         private void GenerateSuperimposeImagesClick(object sender, RoutedEventArgs e)
         {
-            if (!_trackPointsTime.Any()) return;
-            this.PreviewCanvas.SaveCanvasToPNG(
-                System.IO.Path.Combine(System.IO.Path.GetDirectoryName(this.CurrentFile) ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), 
-                $"{System.IO.Path.GetFileNameWithoutExtension(this.CurrentFile)}_{_trackPointsTime[this.TrackPointsTime.SelectedIndex].ElapsedTime.ToString().Replace(':', '.')}_{_trackPointsTime[this.TrackPointsTime.SelectedIndex].Filename}.png"));
+            var items = new List<Helpers.ElapsedPoint>(this.TrackPointsTime.SelectedItems.Cast<Helpers.ElapsedPoint>());
+            if (items is null) return;
+            if (!items.Any()) return;
 
-            //foreach (var elapsed in _trackPointsTime)
-            //{
-            //    _trackPointsElapsedCount = _trackPoints?
-            //        .TakeWhile(p => p.Timestamp.Subtract(_trackPoints.First().Timestamp) <= elapsed.ElapsedTime)
-            //        .Count() ?? 0;
+            foreach (var elapsed in items)
+            {
+                _trackPointsElapsedCount = _trackPoints?
+                    .TakeWhile(p => p.Timestamp.Subtract(_trackPoints.First().Timestamp) <= elapsed.ElapsedTime)
+                    .Count() ?? 0;
 
-            //    this.RedrawTrackCanvas();
-            //    this.TrackCanvas.SaveCanvasToPNG(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(this.CurrentFile) ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), $"{System.IO.Path.GetFileNameWithoutExtension(this.CurrentFile)}_{elapsed.ElapsedTime.ToString().Replace(':', '.')}_{elapsed.Filename}.png"));
-            //}
+                this.RedrawTrackCanvas();
+                this._heightProfile.ElapsedPointsCount = _trackPointsElapsedCount;
+
+                this.PreviewCanvas.UpdateLayout();
+
+                this.PreviewCanvas.SaveCanvasToPNG(
+                    System.IO.Path.Combine(System.IO.Path.GetDirectoryName(this.CurrentFile) ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    $"{System.IO.Path.GetFileNameWithoutExtension(this.CurrentFile)}_{elapsed.ElapsedTime.ToString().Replace(':', '.')}_{elapsed.Filename}.png"));
+            }
         }
 
         public static void TrackCanvasPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -401,9 +418,35 @@ namespace SuperImposX
 
         private static void IsHeightProfileVisibleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            MainWindow._instance._heightProfile.HeightProfileCanvas.Visibility = (bool)e.NewValue ? Visibility.Visible : Visibility.Collapsed;
+            if (MainWindow._instance?._heightProfile is not null)
+                MainWindow._instance._heightProfile.HeightProfileCanvas.Visibility = (bool)e.NewValue ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void OutputSizeComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            switch ((sender as ComboBox)?.SelectedIndex)
+            {
+                case 0:
+                default:
+                    this.DrawingCanvasSize = new Size() { Width = 1280, Height = 720 };
+                    this.DrawingCanvasScale = new Size() { Width = 0.5, Height = 0.5 };
+                    break;
+                case 1:
+                    this.DrawingCanvasSize = new Size() { Width = 1920, Height = 1080 };
+                    this.DrawingCanvasScale = new Size() { Width = 1.0 / 3.0, Height = 1.0/3.0 };
+                    break;
+            }
+
+            this.PreviewCanvas?.UpdateLayout();
+            this.RedrawHeightProfile();
         }
 
         #endregion
+
+        private void OutputSizeComboBoxLoaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is ComboBox box)
+                Helpers.SetWidthFromItems(box);
+        }
     }
 }

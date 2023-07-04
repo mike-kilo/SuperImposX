@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="SuperImposX" 
         ResizeMode="NoResize"
-        Width="900" Height="550"
+        Width="900" Height="560"
         d:DesignWidth="900" d:DesignHeight="550">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -41,6 +41,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -48,19 +49,19 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <TextBlock Text="Width:" Grid.Column="0" Grid.Row="0" />
+                <TextBlock Text="Width:" Grid.Column="0" Grid.Row="0" Margin="3" />
                 <Slider Grid.Column="1" Grid.Row="0" 
-                        Width="100"
+                        Width="100" Margin="3"
                         Value="{Binding TrackCanvasWidth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" LargeChange="100" SmallChange="10"
                         TickFrequency="10" IsSnapToTickEnabled="True"
                         Minimum="100" Maximum="{Binding ElementName=PreviewCanvas, Path=ActualWidth}" />
                 <TextBox Grid.Column="1" Grid.Row="1"
                          IsReadOnly="True" Text="{Binding TrackCanvasWidth, Mode=OneWay, StringFormat={}{0:0}}"
-                         Width="50" HorizontalAlignment="Left"/>
-                <TextBlock Text="Origin X:" Grid.Column="2" Grid.Row="0" />
-                <TextBlock Text="Y:" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Right" />
+                         Width="50" Margin="3" HorizontalAlignment="Left"/>
+                <TextBlock Text="Origin X:" Grid.Column="2" Grid.Row="0" Margin="3" />
+                <TextBlock Text="Y:" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Right" Margin="3" />
                 <Slider Grid.Column="3" Grid.Row="0" 
-                        Width="100"
+                        Width="100" Margin="3"
                         Value="{Binding TrackCanvasOriginX, Mode=TwoWay}" LargeChange="100" SmallChange="10"
                         TickFrequency="10" IsSnapToTickEnabled="True"
                         Minimum="0" Maximum="{Binding ElementName=PreviewCanvas, Path=ActualWidth}" 
@@ -72,7 +73,7 @@
                     </Slider.ToolTip>
                 </Slider>
                 <Slider Grid.Column="3" Grid.Row="1" 
-                        Width="100"
+                        Width="100" Margin="3"
                         Value="{Binding TrackCanvasOriginY, Mode=TwoWay}" LargeChange="100" SmallChange="10"
                         TickFrequency="10" IsSnapToTickEnabled="True"
                         Minimum="0" Maximum="{Binding ElementName=PreviewCanvas, Path=ActualWidth}" 
@@ -83,10 +84,15 @@
                                  ContentStringFormat=" {0:0}" />
                     </Slider.ToolTip>
                 </Slider>
-                <Border Grid.Column="0" Grid.ColumnSpan="5" Grid.Row="2" BorderThickness="1" BorderBrush="Black" Width="640" Height="360" >
-                    <Canvas x:Name="PreviewCanvas" x:FieldModifier="private" Width="1280" Height="720" ClipToBounds="True" Background="Transparent" >
+                <TextBlock Grid.Column="6" Grid.Row="0" Text="Output size:" />
+                <ComboBox Grid.Column="6" Grid.Row="1" SelectionChanged="OutputSizeComboBoxSelectionChanged" Loaded="OutputSizeComboBoxLoaded" >
+                    <ComboBoxItem Content="1280x720" />
+                    <ComboBoxItem Content="1920x1080" IsSelected="True" />
+                </ComboBox>
+                <Border Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="2" BorderThickness="1" BorderBrush="Black" Width="640" Height="360" >
+                    <Canvas x:Name="PreviewCanvas" x:FieldModifier="private" Width="{Binding Path=DrawingCanvasSize.Width, Mode=OneWay}" Height="{Binding Path=DrawingCanvasSize.Height, Mode=OneWay}" ClipToBounds="True" Background="Transparent" >
                         <Canvas.LayoutTransform>
-                            <ScaleTransform ScaleX="0.5" ScaleY="0.5" />
+                            <ScaleTransform ScaleX="{Binding Path=DrawingCanvasScale.Width, Mode=OneWay}" ScaleY="{Binding Path=DrawingCanvasScale.Height, Mode=OneWay}" />
                         </Canvas.LayoutTransform>
                         <Canvas.Children>
                             <Canvas x:Name="TrackCanvas" x:FieldModifier="private" 
@@ -95,7 +101,7 @@
                         </Canvas.Children>
                     </Canvas>
                 </Border>
-                <CheckBox Grid.Row="3" Grid.Column="0" Content="Display height profile" IsChecked="{Binding IsHeightProfileVisible}" />
+                <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Content="Display height profile" IsChecked="{Binding IsHeightProfileVisible}" />
             </Grid>
         </GroupBox>
         <GroupBox Grid.Column="1" Grid.Row="1" Header="Moments" Margin="3" >
@@ -120,7 +126,7 @@
                     <TextBlock Text="{Binding RouteDateFinish, Mode=OneWay, StringFormat=HH\\:mm\\:ss}" />
                     <TextBlock Text="{Binding RouteTimeElapsed, Mode=OneWay, StringFormat=hh\\:mm\\:ss}" />
                 </StackPanel>
-                <ListView x:Name="TrackPointsTime" x:FieldModifier="private" Grid.ColumnSpan="3" Grid.Row="1" SelectionChanged="TrackPointsTimeSelected" SelectionMode="Single" >
+                <ListView x:Name="TrackPointsTime" x:FieldModifier="private" Grid.ColumnSpan="3" Grid.Row="1" SelectionChanged="TrackPointsTimeSelected" SelectionMode="Extended" >
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <WrapPanel>
