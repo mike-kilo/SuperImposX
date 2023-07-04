@@ -246,10 +246,11 @@ namespace SuperImposX
         private void RedrawHeightProfile()
         {
             if (_heightProfile == null) return;
-            _heightProfile.HeightProfileCanvas.Width = 640;
-            _heightProfile.HeightProfileCanvas.Height = 100;
-            Canvas.SetLeft(_heightProfile.HeightProfileCanvas, 320);
-            Canvas.SetTop(_heightProfile.HeightProfileCanvas, 610);
+            _heightProfile.HeightProfileCanvas.Width = this.PreviewCanvas.ActualWidth / 2.0;
+            _heightProfile.HeightProfileCanvas.Height = this.PreviewCanvas.ActualHeight / 7.2;
+            _heightProfile.HeightProfileCanvas.UpdateLayout();
+            Canvas.SetLeft(_heightProfile.HeightProfileCanvas, (this.PreviewCanvas.ActualWidth - _heightProfile.HeightProfileCanvas.ActualWidth) / 2.0);
+            Canvas.SetTop(_heightProfile.HeightProfileCanvas, this.PreviewCanvas.ActualHeight * 0.8);
             _heightProfile.HeightProfileCanvas.UpdateLayout();
 
             _heightProfile.ElapsedPointsCount = _trackPointsElapsedCount;
@@ -430,6 +431,9 @@ namespace SuperImposX
                     this.DrawingCanvasScale = new Size() { Width = 1.0 / 3.0, Height = 1.0/3.0 };
                     break;
             }
+
+            this.PreviewCanvas?.UpdateLayout();
+            this.RedrawHeightProfile();
         }
 
         #endregion
