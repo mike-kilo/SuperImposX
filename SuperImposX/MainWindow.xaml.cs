@@ -390,20 +390,25 @@ namespace SuperImposX
 
         private void GenerateSuperimposeImagesClick(object sender, RoutedEventArgs e)
         {
-            if (!_trackPointsTime.Any()) return;
-            this.PreviewCanvas.SaveCanvasToPNG(
-                System.IO.Path.Combine(System.IO.Path.GetDirectoryName(this.CurrentFile) ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), 
-                $"{System.IO.Path.GetFileNameWithoutExtension(this.CurrentFile)}_{_trackPointsTime[this.TrackPointsTime.SelectedIndex].ElapsedTime.ToString().Replace(':', '.')}_{_trackPointsTime[this.TrackPointsTime.SelectedIndex].Filename}.png"));
+            var items = new List<Helpers.ElapsedPoint>(this.TrackPointsTime.SelectedItems.Cast<Helpers.ElapsedPoint>());
+            if (items is null) return;
+            if (!items.Any()) return;
 
-            //foreach (var elapsed in _trackPointsTime)
-            //{
-            //    _trackPointsElapsedCount = _trackPoints?
-            //        .TakeWhile(p => p.Timestamp.Subtract(_trackPoints.First().Timestamp) <= elapsed.ElapsedTime)
-            //        .Count() ?? 0;
+            foreach (var elapsed in items)
+            {
+                _trackPointsElapsedCount = _trackPoints?
+                    .TakeWhile(p => p.Timestamp.Subtract(_trackPoints.First().Timestamp) <= elapsed.ElapsedTime)
+                    .Count() ?? 0;
 
-            //    this.RedrawTrackCanvas();
-            //    this.TrackCanvas.SaveCanvasToPNG(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(this.CurrentFile) ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), $"{System.IO.Path.GetFileNameWithoutExtension(this.CurrentFile)}_{elapsed.ElapsedTime.ToString().Replace(':', '.')}_{elapsed.Filename}.png"));
-            //}
+                this.RedrawTrackCanvas();
+                this._heightProfile.ElapsedPointsCount = _trackPointsElapsedCount;
+
+                this.PreviewCanvas.UpdateLayout();
+
+                this.PreviewCanvas.SaveCanvasToPNG(
+                    System.IO.Path.Combine(System.IO.Path.GetDirectoryName(this.CurrentFile) ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    $"{System.IO.Path.GetFileNameWithoutExtension(this.CurrentFile)}_{elapsed.ElapsedTime.ToString().Replace(':', '.')}_{elapsed.Filename}.png"));
+            }
         }
 
         public static void TrackCanvasPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

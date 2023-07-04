@@ -126,7 +126,7 @@
                     <TextBlock Text="{Binding RouteDateFinish, Mode=OneWay, StringFormat=HH\\:mm\\:ss}" />
                     <TextBlock Text="{Binding RouteTimeElapsed, Mode=OneWay, StringFormat=hh\\:mm\\:ss}" />
                 </StackPanel>
-                <ListView x:Name="TrackPointsTime" x:FieldModifier="private" Grid.ColumnSpan="3" Grid.Row="1" SelectionChanged="TrackPointsTimeSelected" SelectionMode="Single" >
+                <ListView x:Name="TrackPointsTime" x:FieldModifier="private" Grid.ColumnSpan="3" Grid.Row="1" SelectionChanged="TrackPointsTimeSelected" SelectionMode="Extended" >
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <WrapPanel>
