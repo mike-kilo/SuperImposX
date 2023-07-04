@@ -417,7 +417,7 @@ namespace SuperImposX
                 MainWindow._instance._heightProfile.HeightProfileCanvas.Visibility = (bool)e.NewValue ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OutputSizeComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             switch ((sender as ComboBox)?.SelectedIndex)
             {
@@ -438,7 +438,7 @@ namespace SuperImposX
 
         #endregion
 
-        private void ComboBox_Loaded(object sender, RoutedEventArgs e)
+        private void OutputSizeComboBoxLoaded(object sender, RoutedEventArgs e)
         {
             if (sender is ComboBox box)
                 Helpers.SetWidthFromItems(box);
