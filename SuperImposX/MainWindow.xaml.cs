@@ -436,9 +436,8 @@ namespace SuperImposX
 
         private void ComboBox_Loaded(object sender, RoutedEventArgs e)
         {
-            var cb = (ComboBox)sender;
-            if (sender is ComboBox)
-                Helpers.SetWidthFromItems(sender as ComboBox);
+            if (sender is ComboBox box)
+                Helpers.SetWidthFromItems(box);
         }
     }
 }
